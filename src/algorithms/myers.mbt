@@ -110,7 +110,7 @@ fn find_middle_snake[T : Eq](
       k -= 2
     }
 
-    //Backword 
+    //Backward 
 
     let mut k = d
     while k >= -d {

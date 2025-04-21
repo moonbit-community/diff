@@ -71,6 +71,7 @@ pub fn print_diff_line(old : Array[String], new : Array[String]) -> Unit {
   }
 }
 
+///|
 test "test_diff" {
   let a = [1, 2, 3, 4, 5, 8, 9]
   let b = [1, 2, 0, 4, 5, 6, 7]

@@ -4,5 +4,6 @@
             "path": "ruifeng/diff/algorithms",
             "alias": "algorithms"
         }
-    ]
+    ], 
+    "warn-list": "-1-2-3-5-6-7-8-10-29"
 }

@@ -1,14 +1,14 @@
 ///|
 pub(open) trait DiffHook {
   equal(Self, old_index : Int, new_index : Int, len : Int) ->
-       Result[Unit, Error]
+       Result[Unit, Error] = _
   delete(Self, old_index : Int, old_len : Int, new_index : Int) ->
-       Result[Unit, Error]
+       Result[Unit, Error] = _
   insert(Self, old_index : Int, new_index : Int, new_len : Int) ->
-       Result[Unit, Error]
+       Result[Unit, Error] = _
   replace(Self, old_index : Int, old_len : Int, new_index : Int, new_len : Int) ->
-       Result[Unit, Error]
-  finish(Self) -> Result[Unit, Error]
+       Result[Unit, Error] = _
+  finish(Self) -> Result[Unit, Error] = _
 }
 
 ///|

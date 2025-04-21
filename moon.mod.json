@@ -2,9 +2,9 @@
   "name": "ruifeng/diff",
   "version": "0.1.0",
   "readme": "README.md",
-  "repository": "",
+  "repository": "https://github.com/moonbit-community/diff",
   "license": "Apache-2.0",
-  "keywords": [],
-  "description": "",
+  "keywords": ["diff"],
+  "description": "A diff algorithm library for MoonBit",
   "source": "src"
 }

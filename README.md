@@ -4,13 +4,13 @@ MoonBit diff library
 
 # MileStone
 
-[x] Myers
-[ ] LCS
-[ ] Patience
-[x] Capture
-[ ] Replace
-[ ] Compact
-[x] diff lines 
+- [x] Myers
+- [ ] LCS
+- [ ] Patience
+- [x] Capture
+- [ ] Replace
+- [ ] Compact
+- [x] diff lines
 
 # Examples
 
