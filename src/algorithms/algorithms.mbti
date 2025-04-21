@@ -1,0 +1,67 @@
+package "ruifeng/diff/algorithms"
+
+// Values
+fn common_prefix_len[T : Eq](Array[T], Range, Array[T], Range) -> Int
+
+fn common_suffix_len[T : Eq](Array[T], Range, Array[T], Range) -> Int
+
+// Types and methods
+type Capture
+impl Capture {
+  into_ops(Self) -> Array[DiffOp]
+  new() -> Self
+  ops(Self) -> Array[DiffOp]
+  sort(Self) -> Unit
+  to_iter(Self) -> Iter[DiffOp]
+}
+impl Default for Capture
+impl DiffHook for Capture
+
+pub(all) enum DiffOp {
+  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
+  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
+  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
+  Replace(old_index~ : Int, old_len~ : Int, new_index~ : Int, new_len~ : Int)
+  Finish
+}
+impl Compare for DiffOp
+impl Eq for DiffOp
+impl Hash for DiffOp
+impl Show for DiffOp
+
+type Myers
+impl Myers {
+  diff[T : Eq, D : DiffHook](D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
+}
+
+pub(all) struct Range {
+  mut start : Int
+  mut end : Int
+}
+impl Range {
+  is_empty(Self) -> Bool
+  iter(Self) -> Iter[Int]
+  len(Self) -> Int
+  new(Int, Int) -> Self
+}
+impl Show for Range
+
+type V
+impl V {
+  len(Self) -> Int
+  new(Int) -> Self
+  op_get(Self, Int) -> Int
+  op_set(Self, Int, Int) -> Unit
+}
+
+// Type aliases
+
+// Traits
+pub(open) trait DiffHook {
+  equal(Self, Int, Int, Int) -> Result[Unit, Error] = _
+  delete(Self, Int, Int, Int) -> Result[Unit, Error] = _
+  insert(Self, Int, Int, Int) -> Result[Unit, Error] = _
+  replace(Self, Int, Int, Int, Int) -> Result[Unit, Error] = _
+  finish(Self) -> Result[Unit, Error] = _
+}
+
