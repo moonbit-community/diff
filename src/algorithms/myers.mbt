@@ -161,14 +161,11 @@ fn divide_and_conquer[T : Eq, D : DiffHook](
   old_range.start += common_prefix_len
   new_range.start += common_prefix_len
   let common_suffix_len = common_suffix_len(old, old_range, new, new_range)
-  if common_suffix_len > 0 {
-    let _ = d.equal(
-      old_range.end - common_suffix_len,
-      new_range.end - common_suffix_len,
-      common_suffix_len,
-    )
+  let common_suffix = (
+    old_range.end - common_suffix_len,
+    new_range.end - common_suffix_len,
+  )
 
-  }
   old_range.end -= common_suffix_len
   new_range.end -= common_suffix_len
   if old_range.is_empty() && new_range.is_empty() {
@@ -195,6 +192,10 @@ fn divide_and_conquer[T : Eq, D : DiffHook](
 
       }
     }
+  }
+
+  if common_suffix_len > 0 {
+    let _ = d.equal(common_suffix.0, common_suffix.1, common_suffix_len)
   }
   Ok(())
 }
