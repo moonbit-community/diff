@@ -1,4 +1,57 @@
 ///|
+struct UniqueItem[T] {
+  lookup : Array[T]
+  index : Int
+}
+
+///|
+fn UniqueItem::new[T](lookup : Array[T], index : Int) -> UniqueItem[T] {
+  { lookup, index }
+}
+
+///|
+fn UniqueItem::value[T](self : UniqueItem[T]) -> T {
+  self.lookup[self.index]
+}
+
+///|
+fn UniqueItem::original_index[T](self : UniqueItem[T]) -> Int {
+  self.index
+}
+
+///|
+impl[T : Eq] Eq for UniqueItem[T] with op_equal(self, other) {
+  self.value() == other.value()
+}
+
+///|
+impl[T : Show] Show for UniqueItem[T] with output(self, logger) {
+  self.value().output(logger)
+}
+
+///|
+pub fn unique[T : Eq + Hash](
+  array : Array[T],
+  range : Range
+) -> Array[UniqueItem[T]] {
+  let map : @hashmap.T[T, Int?] = @hashmap.new()
+  for i in range {
+    match map[array[i]] {
+      None => map[array[i]] = Some(i)
+      Some(Some(_)) => map[array[i]] = None
+      _ => ()
+    }
+  }
+  let result = map
+    .iter()
+    .filter_map(fn { (_, x) => x })
+    .map(fn { index => UniqueItem::new(array, index) })
+    .collect()
+  result.sort_by_key(fn { item => item.original_index() })
+  result
+}
+
+///|
 pub fn common_prefix_len[T : Eq](
   old : Array[T],
   old_range : Range,

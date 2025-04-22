@@ -165,7 +165,6 @@ fn divide_and_conquer[T : Eq, D : DiffHook](
     old_range.end - common_suffix_len,
     new_range.end - common_suffix_len,
   )
-
   old_range.end -= common_suffix_len
   new_range.end -= common_suffix_len
   if old_range.is_empty() && new_range.is_empty() {
@@ -193,9 +192,9 @@ fn divide_and_conquer[T : Eq, D : DiffHook](
       }
     }
   }
-
   if common_suffix_len > 0 {
     let _ = d.equal(common_suffix.0, common_suffix.1, common_suffix_len)
+
   }
   Ok(())
 }
@@ -237,7 +236,10 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  println(ops)
+  inspect!(
+    ops,
+    content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=4), Insert(old_index=3, new_index=3, new_len=1), Equal(old_index=4, new_index=4, len=1)]",
+  )
   let a = [0, 1, 2, 3, 4, 4, 4, 5]
   let b = [0, 1, 2, 8, 9, 4, 4, 7]
   let capture = Capture::new()
@@ -249,7 +251,10 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  println(ops)
+  inspect!(
+    ops,
+    content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=4), Insert(old_index=3, new_index=3, new_len=1), Insert(old_index=4, new_index=4, new_len=1), Equal(old_index=4, new_index=5, len=2), Delete(old_index=6, old_len=2, new_index=7), Insert(old_index=8, new_index=7, new_len=1)]",
+  )
   let a = [0, 1, 3, 4, 5]
   let b = [0, 1, 4, 5, 8, 9]
   let capture = Capture::new()
@@ -261,5 +266,8 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  println(ops)
+  inspect!(
+    ops,
+    content="[Equal(old_index=0, new_index=0, len=2), Delete(old_index=2, old_len=1, new_index=2), Equal(old_index=3, new_index=2, len=2), Insert(old_index=5, new_index=4, new_len=1), Insert(old_index=5, new_index=5, new_len=1)]",
+  )
 }

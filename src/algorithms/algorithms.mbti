@@ -5,6 +5,8 @@ fn common_prefix_len[T : Eq](Array[T], Range, Array[T], Range) -> Int
 
 fn common_suffix_len[T : Eq](Array[T], Range, Array[T], Range) -> Int
 
+fn unique[T : Eq + Hash](Array[T], Range) -> Array[UniqueItem[T]]
+
 // Types and methods
 type Capture
 impl Capture {
@@ -34,17 +36,57 @@ impl Myers {
   diff[T : Eq, D : DiffHook](D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
 }
 
+pub(all) struct NoFinishHook[D] {
+  d : D
+}
+impl NoFinishHook {
+  into_inner[D](Self[D]) -> D
+  new[D](D) -> Self[D]
+}
+
+pub(all) struct Patience[T, D] {
+  d : D
+  old : Array[T]
+  mut old_current : Int
+  old_end : Int
+  old_indexes : Array[UniqueItem[T]]
+  new : Array[T]
+  mut new_current : Int
+  new_end : Int
+  new_indexes : Array[UniqueItem[T]]
+}
+impl Patience {
+  diff[T : Eq + Hash, D : DiffHook](D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
+}
+
 pub(all) struct Range {
   mut start : Int
   mut end : Int
 }
 impl Range {
+  contains(Self, Int) -> Bool
   is_empty(Self) -> Bool
   iter(Self) -> Iter[Int]
   len(Self) -> Int
   new(Int, Int) -> Self
 }
 impl Show for Range
+
+pub(all) struct Replace[D] {
+  d : D
+  mut del : (Int, Int, Int)?
+  mut ins : (Int, Int, Int)?
+  mut eq : (Int, Int, Int)?
+}
+impl Replace {
+  flush_del_ins[D : DiffHook](Self[D]) -> Result[Unit, Error]
+  flush_eq[D : DiffHook](Self[D]) -> Result[Unit, Error]
+  into_inner[D : DiffHook](Self[D]) -> D
+  new[D : DiffHook](D) -> Self[D]
+}
+impl[D : DiffHook] DiffHook for Replace[D]
+
+type UniqueItem[T]
 
 type V
 impl V {

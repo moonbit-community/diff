@@ -13,6 +13,8 @@ fn diff_str(String, String) -> Array[@algorithms.DiffOp]
 
 fn print_diff_line(Array[String], Array[String]) -> Unit
 
+fn print_diff_ops[T : Show](Array[T], Array[T], Array[@algorithms.DiffOp]) -> Unit
+
 // Types and methods
 
 // Type aliases

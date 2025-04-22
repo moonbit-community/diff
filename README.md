@@ -5,23 +5,22 @@ MoonBit diff library
 # MileStone
 
 - [x] Myers
-- [ ] LCS
-- [ ] Patience
+- [x] Patience
 - [x] Capture
-- [ ] Replace
+- [x] Replace
 - [ ] Compact
 - [x] diff lines
 
 # Examples
 
 ```
-# diff array
+// diff array
 let a = [1, 2, 3, 4, 5, 8, 9]
 let b = [1, 2, 0, 4, 5, 6, 7]
 let diffs = diff(a, b)
 println(diffs)
 
-# diff lines
+// diff lines
 let old = ["0", "1", "2", "3", "4", "5"]
 let new = ["9", "1", "2", "5", "6", "7"]
 print_diff_line(old, new)

@@ -22,9 +22,15 @@ pub fn Range::len(self : Range) -> Int {
 ///|
 pub fn Range::iter(self : Range) -> Iter[Int] {
   let arr : Array[Int] = []
-  let i = self.start
+  let mut i = self.start
   while i < self.end {
     arr.push(i)
+    i += 1
   }
   arr.iter()
+}
+
+///|
+pub fn Range::contains(self : Range, i : Int) -> Bool {
+  i >= self.start && i < self.end
 }
