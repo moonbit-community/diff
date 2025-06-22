@@ -38,7 +38,7 @@ fn split_at(range : Range, at : Int) -> (Range, Range) {
 }
 
 ///|
-pub fn Myers::diff[T : Eq, D : DiffHook](
+pub fn[T : Eq, D : DiffHook] Myers::diff(
   d : D,
   old : Array[T],
   old_range : Range,
@@ -54,7 +54,7 @@ pub fn Myers::diff[T : Eq, D : DiffHook](
 
 ///|
 /// return the start position of snake
-fn find_middle_snake[T : Eq](
+fn[T : Eq] find_middle_snake(
   old : Array[T],
   old_range : Range,
   new : Array[T],
@@ -144,7 +144,7 @@ fn find_middle_snake[T : Eq](
 }
 
 ///|
-fn divide_and_conquer[T : Eq, D : DiffHook](
+fn[T : Eq, D : DiffHook] divide_and_conquer(
   d : D,
   old : Array[T],
   old_range : Range,
@@ -216,8 +216,8 @@ test "test_middle_snake" {
       vb,
     ) {
     Some((x_start, y_start)) => {
-      inspect!(x_start, content="4")
-      inspect!(y_start, content="1")
+      inspect(x_start, content="4")
+      inspect(y_start, content="1")
     }
     None => abort("No middle snake found")
   }
@@ -236,7 +236,7 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  inspect!(
+  inspect(
     ops,
     content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=4), Insert(old_index=3, new_index=3, new_len=1), Equal(old_index=4, new_index=4, len=1)]",
   )
@@ -251,7 +251,7 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  inspect!(
+  inspect(
     ops,
     content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=4), Insert(old_index=3, new_index=3, new_len=1), Insert(old_index=4, new_index=4, new_len=1), Equal(old_index=4, new_index=5, len=2), Delete(old_index=6, old_len=2, new_index=7), Insert(old_index=8, new_index=7, new_len=1)]",
   )
@@ -266,7 +266,7 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  inspect!(
+  inspect(
     ops,
     content="[Equal(old_index=0, new_index=0, len=2), Delete(old_index=2, old_len=1, new_index=2), Equal(old_index=3, new_index=2, len=2), Insert(old_index=5, new_index=4, new_len=1), Insert(old_index=5, new_index=5, new_len=1)]",
   )

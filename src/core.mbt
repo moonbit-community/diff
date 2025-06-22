@@ -5,7 +5,7 @@ typealias @algorithms.Range
 typealias @algorithms.DiffOp
 
 ///|
-pub fn diff[T : Eq](old : Array[T], new : Array[T]) -> Array[DiffOp] {
+pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[DiffOp] {
   let d = @algorithms.Replace::new(@algorithms.Capture::new())
   let _ = @algorithms.Myers::diff(
     d,
@@ -34,7 +34,7 @@ pub fn print_diff_line(old : Array[String], new : Array[String]) -> Unit {
 }
 
 ///|
-pub fn print_diff_ops[T : Show](
+pub fn[T : Show] print_diff_ops(
   old : Array[T],
   new : Array[T],
   ops : Array[DiffOp]
@@ -84,7 +84,7 @@ test "test_diff" {
   let a = [1, 2, 3, 4, 5, 8, 9]
   let b = [1, 2, 0, 4, 5, 6, 7]
   let diffs = diff(a, b)
-  inspect!(
+  inspect(
     diffs,
     content="[Equal(old_index=0, new_index=0, len=2), Replace(old_index=2, old_len=1, new_index=2, new_len=1), Equal(old_index=3, new_index=3, len=2), Replace(old_index=5, old_len=2, new_index=5, new_len=2)]",
   )

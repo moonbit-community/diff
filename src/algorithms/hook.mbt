@@ -1,13 +1,21 @@
 ///|
 pub(open) trait DiffHook {
-  equal(Self, old_index : Int, new_index : Int, len : Int) ->
-       Result[Unit, Error] = _
-  delete(Self, old_index : Int, old_len : Int, new_index : Int) ->
-       Result[Unit, Error] = _
-  insert(Self, old_index : Int, new_index : Int, new_len : Int) ->
-       Result[Unit, Error] = _
-  replace(Self, old_index : Int, old_len : Int, new_index : Int, new_len : Int) ->
-       Result[Unit, Error] = _
+  equal(Self, old_index : Int, new_index : Int, len : Int) -> Result[
+    Unit,
+    Error,
+  ] = _
+  delete(Self, old_index : Int, old_len : Int, new_index : Int) -> Result[
+    Unit,
+    Error,
+  ] = _
+  insert(Self, old_index : Int, new_index : Int, new_len : Int) -> Result[
+    Unit,
+    Error,
+  ] = _
+  replace(Self, old_index : Int, old_len : Int, new_index : Int, new_len : Int) -> Result[
+    Unit,
+    Error,
+  ] = _
   finish(Self) -> Result[Unit, Error] = _
 }
 
@@ -63,12 +71,12 @@ pub(all) struct NoFinishHook[D] {
 }
 
 ///|
-pub fn NoFinishHook::new[D](d : D) -> NoFinishHook[D] {
+pub fn[D] NoFinishHook::new(d : D) -> NoFinishHook[D] {
   NoFinishHook::{ d, }
 }
 
 ///|
-pub fn NoFinishHook::into_inner[D](self : NoFinishHook[D]) -> D {
+pub fn[D] NoFinishHook::into_inner(self : NoFinishHook[D]) -> D {
   self.d
 }
 

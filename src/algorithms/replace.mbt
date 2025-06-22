@@ -7,17 +7,17 @@ pub(all) struct Replace[D] {
 }
 
 ///|
-pub fn Replace::new[D : DiffHook](d : D) -> Replace[D] {
+pub fn[D : DiffHook] Replace::new(d : D) -> Replace[D] {
   { d, del: None, ins: None, eq: None }
 }
 
 ///|
-pub fn Replace::into_inner[D : DiffHook](self : Replace[D]) -> D {
+pub fn[D : DiffHook] Replace::into_inner(self : Replace[D]) -> D {
   self.d
 }
 
 ///|
-pub fn Replace::flush_eq[D : DiffHook](
+pub fn[D : DiffHook] Replace::flush_eq(
   self : Replace[D]
 ) -> Result[Unit, Error] {
   match self.eq {
@@ -30,7 +30,7 @@ pub fn Replace::flush_eq[D : DiffHook](
 }
 
 ///|
-pub fn Replace::flush_del_ins[D : DiffHook](
+pub fn[D : DiffHook] Replace::flush_del_ins(
   self : Replace[D]
 ) -> Result[Unit, Error] {
   match self.del {
@@ -143,7 +143,7 @@ test "test_myers_replace" {
     Range::new(0, b.length()),
   )
   let ops = capture.ops()
-  inspect!(
+  inspect(
     ops,
     content="[Equal(old_index=0, new_index=0, len=1), Replace(old_index=1, old_len=1, new_index=1, new_len=1), Equal(old_index=2, new_index=2, len=3), Replace(old_index=5, old_len=1, new_index=5, new_len=1), Equal(old_index=6, new_index=6, len=3)]",
   )
@@ -163,7 +163,7 @@ test "test_replace" {
     Range::new(0, b.length()),
   )
   let ops = capture.ops()
-  inspect!(
+  inspect(
     ops,
     content="[Equal(old_index=0, new_index=0, len=3), Replace(old_index=3, old_len=2, new_index=3, new_len=3)]",
   )
