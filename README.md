@@ -8,7 +8,7 @@ MoonBit diff library
 - [x] Patience
 - [x] Capture
 - [x] Replace
-- [ ] Compact
+- [x] Compact
 - [x] diff lines
 
 # Examples

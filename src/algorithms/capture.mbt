@@ -84,29 +84,23 @@ pub fn Capture::sort(self : Capture) -> Unit {
         Some((old_index, new_index))
       DiffOp::Replace(old_index~, old_len=_, new_index~, new_len=_) =>
         Some((old_index, new_index))
-      DiffOp::Finish => None
     }
   }
 
   self
   .inner()
   .sort_by(fn(a : DiffOp, b : DiffOp) -> Int {
-    match a {
-      DiffOp::Finish => -1
-      _ => {
-        let (a_old, a_new) = get_old_new_index(a).unwrap()
-        let (b_old, b_new) = get_old_new_index(b).unwrap()
-        if a_old == b_old {
-          match (a, b) {
-            (Delete(..), Delete(..)) => a_new - b_new
-            (Delete(..), _) => -1
-            (_, Delete(..)) => 1
-            _ => a_new - b_new
-          }
-        } else {
-          a_old - b_old
-        }
+    let (a_old, a_new) = get_old_new_index(a).unwrap()
+    let (b_old, b_new) = get_old_new_index(b).unwrap()
+    if a_old == b_old {
+      match (a, b) {
+        (Delete(..), Delete(..)) => a_new - b_new
+        (Delete(..), _) => -1
+        (_, Delete(..)) => 1
+        _ => a_new - b_new
       }
+    } else {
+      a_old - b_old
     }
   })
 }

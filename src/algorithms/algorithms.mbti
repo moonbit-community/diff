@@ -1,9 +1,15 @@
 package "ruifeng/diff/algorithms"
 
 // Values
+fn[T : Eq] cleanup_diff_ops(Array[T], Array[T], Array[DiffOp]) -> Unit
+
 fn[T : Eq] common_prefix_len(Array[T], Range, Array[T], Range) -> Int
 
 fn[T : Eq] common_suffix_len(Array[T], Range, Array[T], Range) -> Int
+
+fn[T : Eq] shift_diff_ops_down(Array[DiffOp], Array[T], Array[T], Int) -> Int
+
+fn[T : Eq] shift_diff_ops_up(Array[DiffOp], Array[T], Array[T], Int) -> Int
 
 fn[T : Eq + Hash] unique(Array[T], Range) -> Array[UniqueItem[T]]
 
@@ -17,13 +23,34 @@ fn Capture::to_iter(Self) -> Iter[DiffOp]
 impl Default for Capture
 impl DiffHook for Capture
 
-pub(all) enum DiffOp {
-  Equal(old_index~ : Int, new_index~ : Int, len~ : Int)
-  Delete(old_index~ : Int, old_len~ : Int, new_index~ : Int)
-  Insert(old_index~ : Int, new_index~ : Int, new_len~ : Int)
-  Replace(old_index~ : Int, old_len~ : Int, new_index~ : Int, new_len~ : Int)
-  Finish
+pub(all) struct Compact[D, T] {
+  d : D
+  ops : Array[DiffOp]
+  old : Array[T]
+  new : Array[T]
 }
+fn[D : DiffHook, T] Compact::into_inner(Self[D, T]) -> D
+fn[D, T] Compact::into_ops(Self[D, T]) -> Array[DiffOp]
+fn[D : DiffHook, T] Compact::new(D, Array[T], Array[T]) -> Self[D, T]
+fn[D, T] Compact::sort(Self[D, T]) -> Unit
+impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T]
+
+pub(all) enum DiffOp {
+  Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
+  Delete(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int)
+  Insert(mut old_index~ : Int, mut new_index~ : Int, mut new_len~ : Int)
+  Replace(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int, mut new_len~ : Int)
+}
+fn[D : DiffHook] DiffOp::apply_to_hook(Self, D) -> Result[Unit, Error]
+fn DiffOp::grow_left(Self, Int) -> Unit
+fn DiffOp::grow_right(Self, Int) -> Unit
+fn DiffOp::is_empty(Self) -> Bool
+fn DiffOp::new_range(Self) -> Range
+fn DiffOp::old_range(Self) -> Range
+fn DiffOp::shift_left(Self, Int) -> Unit
+fn DiffOp::shift_right(Self, Int) -> Unit
+fn DiffOp::shrink_left(Self, Int) -> Unit
+fn DiffOp::shrink_right(Self, Int) -> Unit
 impl Compare for DiffOp
 impl Eq for DiffOp
 impl Hash for DiffOp

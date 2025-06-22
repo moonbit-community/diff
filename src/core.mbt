@@ -5,8 +5,17 @@ typealias @algorithms.Range
 typealias @algorithms.DiffOp
 
 ///|
+typealias @algorithms.Replace
+
+///|
+typealias @algorithms.Capture
+
+///|
+typealias @algorithms.Compact
+
+///|
 pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[DiffOp] {
-  let d = @algorithms.Replace::new(@algorithms.Capture::new())
+  let d = Replace::new(Capture::new())
   let _ = @algorithms.Myers::diff(
     d,
     old,
@@ -28,7 +37,7 @@ pub fn diff_line(old : Array[String], new : Array[String]) -> Array[DiffOp] {
 }
 
 ///|
-pub fn print_diff_line(old : Array[String], new : Array[String]) -> Unit {
+pub fn[T : Eq + Show] print_diff_line(old : Array[T], new : Array[T]) -> Unit {
   let ops = diff(old, new)
   print_diff_ops(old, new, ops)
 }
@@ -74,9 +83,24 @@ pub fn[T : Show] print_diff_ops(
           i += 1
         }
       }
-      DiffOp::Finish => break
     }
   }
+}
+
+///|
+pub fn[T : Eq] diff_with_compact(
+  old : Array[T],
+  new : Array[T]
+) -> Array[DiffOp] {
+  let d = Compact::new(Replace::new(Capture::new()), old, new)
+  let _ = @algorithms.Myers::diff(
+    d,
+    old,
+    Range::new(0, old.length()),
+    new,
+    Range::new(0, new.length()),
+  )
+  d.into_ops()
 }
 
 ///|
@@ -95,4 +119,15 @@ test "test_print_diff_line" {
   let old = ["0", "1", "2", "3", "4", "5"]
   let new = ["9", "1", "2", "5", "6", "7"]
   print_diff_line(old, new)
+}
+
+///|
+test "test_diff_with_compact" {
+  let old = "a b c d".to_array()
+  let new = "a b d c".to_array()
+  let compact_diffs = diff_with_compact(old, new)
+  inspect(
+    compact_diffs,
+    content="[Equal(old_index=0, new_index=0, len=4), Insert(old_index=4, new_index=4, new_len=2), Equal(old_index=4, new_index=6, len=1), Delete(old_index=5, old_len=2, new_index=7)]",
+  )
 }
