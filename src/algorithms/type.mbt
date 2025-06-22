@@ -1,8 +1,12 @@
-///| 
+///| Represents the different types of operations in a diff.
 pub(all) enum DiffOp {
+  /// A sequence of items that are the same in both versions.
   Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
+  /// A sequence of items that were deleted from the old version.
   Delete(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int)
+  /// A sequence of items that were inserted in the new version.
   Insert(mut old_index~ : Int, mut new_index~ : Int, mut new_len~ : Int)
+  /// A sequence of items that were replaced.
   Replace(
     mut old_index~ : Int,
     mut old_len~ : Int,
@@ -11,7 +15,7 @@ pub(all) enum DiffOp {
   )
 } derive(Eq, Show, Hash, Compare)
 
-///|
+///| Applies the given `DiffOp` to a `DiffHook`.
 pub fn[D : DiffHook] DiffOp::apply_to_hook(
   self : Self,
   d : D
@@ -27,7 +31,7 @@ pub fn[D : DiffHook] DiffOp::apply_to_hook(
   }
 }
 
-///|
+///| Returns the range of the operation in the old sequence.
 pub fn DiffOp::old_range(self : Self) -> Range {
   match self {
     Equal(old_index~, new_index=_, len~) =>
@@ -41,7 +45,7 @@ pub fn DiffOp::old_range(self : Self) -> Range {
   }
 }
 
-///|
+///| Returns the range of the operation in the new sequence.
 pub fn DiffOp::new_range(self : Self) -> Range {
   match self {
     Equal(old_index=_, new_index~, len~) =>
@@ -55,42 +59,54 @@ pub fn DiffOp::new_range(self : Self) -> Range {
   }
 }
 
-///|
+///| Checks if the operation is empty (i.e., has a length of zero).
 pub fn DiffOp::is_empty(self : Self) -> Bool {
   self.old_range().is_empty() && self.new_range().is_empty()
 }
 
-///|
+///| Shifts the operation to the left by a given amount.
+
+///| This is used by the `Compact` hook to merge operations.
 pub fn DiffOp::shift_left(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, true), (0, false))
 }
 
-///|
+///| Shifts the operation to the right by a given amount.
+
+///| This is used by the `Compact` hook to merge operations.
 pub fn DiffOp::shift_right(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, false), (0, false))
 }
 
-///|
+///| Grows the operation to the left by a given amount.
+
+///| This is used by the `Compact` hook to merge operations.
 pub fn DiffOp::grow_left(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, true), (adjust, false))
 }
 
-///|
+///| Grows the operation to the right by a given amount.
+
+///| This is used by the `Compact` hook to merge operations.
 pub fn DiffOp::grow_right(self : Self, adjust : Int) -> Unit {
   self.adjust((0, false), (adjust, false))
 }
 
-///|
+///| Shrinks the operation from the left by a given amount.
+
+///| This is used by the `Compact` hook to merge operations.
 pub fn DiffOp::shrink_left(self : Self, adjust : Int) -> Unit {
   self.adjust((0, false), (adjust, false))
 }
 
-///|
+///| Shrinks the operation from the right by a given amount.
+
+///| This is used by the `Compact` hook to merge operations.
 pub fn DiffOp::shrink_right(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, false), (adjust, true))
 }
 
-///|
+///| A helper function to adjust the offsets and lengths of an operation.
 fn DiffOp::adjust(
   self : Self,
   adjust_offset : (Int, Bool),

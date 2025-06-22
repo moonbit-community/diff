@@ -1,35 +1,41 @@
-///|
+///| A wrapper around an item in a sequence that includes its original index.
+
+///| Used by the Patience diff algorithm to track unique items.
 struct UniqueItem[T] {
+  // A reference to the original sequence.
   lookup : Array[T]
+  // The original index of the item in the sequence.
   index : Int
 }
 
-///|
+///| Creates a new `UniqueItem`.
 fn[T] UniqueItem::new(lookup : Array[T], index : Int) -> UniqueItem[T] {
   { lookup, index }
 }
 
-///|
+///| Returns the value of the item.
 fn[T] UniqueItem::value(self : UniqueItem[T]) -> T {
   self.lookup[self.index]
 }
 
-///|
+///| Returns the original index of the item.
 fn[T] UniqueItem::original_index(self : UniqueItem[T]) -> Int {
   self.index
 }
 
-///|
+///| Implements equality for `UniqueItem` based on their values.
 impl[T : Eq] Eq for UniqueItem[T] with op_equal(self, other) {
   self.value() == other.value()
 }
 
-///|
+///| Implements display formatting for `UniqueItem`.
 impl[T : Show] Show for UniqueItem[T] with output(self, logger) {
   self.value().output(logger)
 }
 
-///|
+///| Finds all unique items in a given range of a sequence.
+
+///| An item is considered unique if it appears exactly once.
 pub fn[T : Eq + Hash] unique(
   array : Array[T],
   range : Range
@@ -51,7 +57,7 @@ pub fn[T : Eq + Hash] unique(
   result
 }
 
-///|
+///| Calculates the length of the common prefix between two sequences.
 pub fn[T : Eq] common_prefix_len(
   old : Array[T],
   old_range : Range,
@@ -73,7 +79,7 @@ pub fn[T : Eq] common_prefix_len(
   length
 }
 
-///|
+///| A test for the `common_prefix_len` function.
 test "common_prefix_len" {
   let old = [1, 2, 3, 4, 5]
   let new = [1, 2, 3, 4, 5]
@@ -87,7 +93,7 @@ test "common_prefix_len" {
   inspect(common_prefix_len(old, old_range, new, new_range), content="4")
 }
 
-///|
+///| Calculates the length of the common suffix between two sequences.
 pub fn[T : Eq] common_suffix_len(
   old : Array[T],
   old_range : Range,
@@ -109,7 +115,7 @@ pub fn[T : Eq] common_suffix_len(
   length
 }
 
-///|
+///| A test for the `common_suffix_len` function.
 test "common_suffix_len" {
   let old = [1, 2, 3, 4, 5]
   let new = [1, 2, 3, 4, 5]

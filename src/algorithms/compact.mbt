@@ -1,4 +1,6 @@
-///| a more compact diff result 
+///| A diff hook that tries to produce a more compact and human-readable diff.
+
+///| It wraps another diff hook and processes the operations before passing them on.
 pub(all) struct Compact[D, T] {
   d : D
   ops : Array[DiffOp]
@@ -6,7 +8,7 @@ pub(all) struct Compact[D, T] {
   new : Array[T]
 }
 
-///|
+///| Creates a new `Compact` hook.
 pub fn[D : DiffHook, T] Compact::new(
   d : D,
   old : Array[T],
@@ -15,17 +17,17 @@ pub fn[D : DiffHook, T] Compact::new(
   { d, ops: Array::new(), old, new }
 }
 
-///|
+///| Consumes the `Compact` hook and returns the inner hook.
 pub fn[D : DiffHook, T] Compact::into_inner(self : Compact[D, T]) -> D {
   self.d
 }
 
-///|
+///| An `into_ops` for testing purposes.
 pub fn[D, T] Compact::into_ops(self : Compact[D, T]) -> Array[DiffOp] {
   self.ops
 }
 
-///|
+///| Captures an `Equal` operation.
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
   self,
   old_index,
@@ -36,7 +38,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
   Ok(())
 }
 
-///|
+///| Captures a `Delete` operation.
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
   self,
   old_index,
@@ -47,7 +49,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
   Ok(())
 }
 
-///|
+///| Captures an `Insert` operation.
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
   self,
   old_index,
@@ -58,12 +60,15 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
   Ok(())
 }
 
-///|
+///| Finishes the diffing process.
+
+///| It cleans up the operations and then passes them to the inner hook.
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> Result[
   Unit,
   Error,
 ] {
   cleanup_diff_ops(self.old, self.new, self.ops)
+  self.sort()
   for op in self.ops {
     let _ = op.apply_to_hook(self.d)
 
@@ -71,24 +76,15 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> R
   self.d.finish()
 }
 
-///|
+///| Cleans up the captured diff operations to make them more compact.
+
+///| It shifts operations up and down to merge them.
 pub fn[T : Eq] cleanup_diff_ops(
   old : Array[T],
   new : Array[T],
   ops : Array[DiffOp]
 ) -> Unit {
-  let mut pointer = 0
-  while pointer < ops.length() {
-    let op = ops.get(pointer).unwrap()
-    match op {
-      DiffOp::Insert(..) => {
-        pointer = shift_diff_ops_up(ops, old, new, pointer)
-        pointer = shift_diff_ops_down(ops, old, new, pointer)
-      }
-      _ => ()
-    }
-    pointer += 1
-  }
+  // First, shift all delete operations up and down.
   let mut pointer = 0
   while pointer < ops.length() {
     let op = ops.get(pointer).unwrap()
@@ -101,11 +97,24 @@ pub fn[T : Eq] cleanup_diff_ops(
     }
     pointer += 1
   }
+  // Then, shift all insert operations up and down.
+  let mut pointer = 0
+  while pointer < ops.length() {
+    let op = ops.get(pointer).unwrap()
+    match op {
+      DiffOp::Insert(..) => {
+        pointer = shift_diff_ops_up(ops, old, new, pointer)
+        pointer = shift_diff_ops_down(ops, old, new, pointer)
+      }
+      _ => ()
+    }
+    pointer += 1
+  }
 }
 
-///| Find Common Suffix between equal with insert/delete ops
+///| Tries to shift an operation up (earlier) in the list of diff operations.
 
-///| try to shift insert/delete ops upwards to merge with equal ops
+///| This helps to merge adjacent operations and simplify the diff.
 pub fn[T : Eq] shift_diff_ops_up(
   ops : Array[DiffOp],
   old : Array[T],
@@ -117,27 +126,31 @@ pub fn[T : Eq] shift_diff_ops_up(
     let prev_op = ops[pointer - 1]
     let this_op = ops[pointer]
     match (this_op, prev_op) {
-
-      // swap delete and insert
+      // Swap insert and delete operations.
+      // This can help group inserts and deletes together for merging.
       (DiffOp::Insert(..), DiffOp::Delete(..))
       | (DiffOp::Delete(..), DiffOp::Insert(..)) => {
         ops.swap(pointer - 1, pointer)
         pointer -= 1
       }
-      // merge  
+
+      // Merge two adjacent insert operations into one.
       (DiffOp::Insert(..), DiffOp::Insert(..)) => {
         ops[pointer - 1].grow_right(this_op.new_range().len())
         let _ = ops.remove(pointer)
         pointer -= 1
       }
+
+      // Merge two adjacent delete operations into one.
       (DiffOp::Delete(..), DiffOp::Delete(..)) => {
         ops[pointer - 1].grow_right(this_op.old_range().len())
         let _ = ops.remove(pointer)
         pointer -= 1
       }
-      // Shift Inserts Upwards 
+
+      // An insert operation is next to an equal operation.
+      // We can try to shift the insert upwards by finding a common suffix.
       (DiffOp::Insert(..), DiffOp::Equal(..)) => {
-        // Insert means adding some items to "new"
         let suffix_len = common_suffix_len(
           new,
           prev_op.new_range(),
@@ -145,10 +158,11 @@ pub fn[T : Eq] shift_diff_ops_up(
           this_op.new_range(),
         )
         if suffix_len > 0 {
-          // merge/add new equal op 
+          // A common suffix exists, so we can shift the operations.
           match ops.get(pointer + 1) {
             Some(DiffOp::Equal(..) as next_op) => next_op.grow_left(suffix_len)
             _ => {
+              // Otherwise, create a new `Equal` operation.
               let old_index = this_op.old_range().end - suffix_len
               let new_index = this_op.new_range().end - suffix_len
               let len = suffix_len
@@ -158,9 +172,12 @@ pub fn[T : Eq] shift_diff_ops_up(
               )
             }
           }
-          // update this_op and prev_op 
+
+          // Adjust the original operations.
           this_op.shift_left(suffix_len)
           prev_op.shrink_left(suffix_len)
+
+          // If the previous `Equal` op is now empty, remove it.
           if prev_op.is_empty() {
             let _ = ops.remove(pointer - 1)
             pointer -= 1
@@ -169,14 +186,14 @@ pub fn[T : Eq] shift_diff_ops_up(
           let _ = ops.remove(pointer - 1)
           pointer -= 1
         } else {
-          // can't shift anymore
+          // No common suffix, so we can't shift anymore.
           break
         }
       }
 
-      // Shift Deletes Upwards 
+      // A delete operation is next to an equal operation.
+      // We can try to shift the delete upwards by finding a common suffix.
       (DiffOp::Delete(..), DiffOp::Equal(..)) => {
-        // Delete means removing some items from "old"
         let suffix_len = common_suffix_len(
           old,
           prev_op.old_range(),
@@ -184,10 +201,11 @@ pub fn[T : Eq] shift_diff_ops_up(
           this_op.old_range(),
         )
         if suffix_len > 0 {
-          // merge/add new equal op 
+          // A common suffix exists, so we can shift the operations.
           match ops.get(pointer + 1) {
             Some(DiffOp::Equal(..) as next_op) => next_op.grow_left(suffix_len)
             _ => {
+              // Otherwise, create a new `Equal` operation.
               let old_index = this_op.old_range().end - suffix_len
               let new_index = this_op.new_range().end - suffix_len
               let len = suffix_len
@@ -197,8 +215,12 @@ pub fn[T : Eq] shift_diff_ops_up(
               )
             }
           }
+
+          // Adjust the original operations.
           this_op.shift_left(suffix_len)
           prev_op.shrink_left(suffix_len)
+
+          // If the previous `Equal` op is now empty, remove it.
           if prev_op.is_empty() {
             let _ = ops.remove(pointer - 1)
             pointer -= 1
@@ -207,7 +229,7 @@ pub fn[T : Eq] shift_diff_ops_up(
           let _ = ops.remove(pointer - 1)
           pointer -= 1
         } else {
-          // can't shift anymore
+          // No common suffix, so we can't shift anymore.
           break
         }
       }
@@ -217,7 +239,9 @@ pub fn[T : Eq] shift_diff_ops_up(
   pointer
 }
 
-///|
+///| Tries to shift an operation down (later) in the list of diff operations.
+
+///| This helps to merge adjacent operations and simplify the diff.
 pub fn[T : Eq] shift_diff_ops_down(
   ops : Array[DiffOp],
   old : Array[T],
@@ -229,27 +253,31 @@ pub fn[T : Eq] shift_diff_ops_down(
     let next_op = ops[pointer + 1]
     let this_op = ops[pointer]
     match (this_op, next_op) {
-
-      // swap delete and insert
+      // Swap insert and delete operations.
+      // This can help group inserts and deletes together for merging.
       (DiffOp::Insert(..), DiffOp::Delete(..))
       | (DiffOp::Delete(..), DiffOp::Insert(..)) => {
         ops.swap(pointer, pointer + 1)
         pointer += 1
       }
-      // merge  
+
+      // Merge two adjacent insert operations into one.
       (DiffOp::Insert(..), DiffOp::Insert(..)) => {
         this_op.grow_right(next_op.new_range().len())
         let _ = ops.remove(pointer + 1)
 
       }
+
+      // Merge two adjacent delete operations into one.
       (DiffOp::Delete(..), DiffOp::Delete(..)) => {
         this_op.grow_right(next_op.old_range().len())
         let _ = ops.remove(pointer + 1)
 
       }
-      // Shift Inserts Upwards 
+
+      // An insert operation is followed by an equal operation.
+      // We can try to shift the insert downwards by finding a common prefix.
       (DiffOp::Insert(..), DiffOp::Equal(..)) => {
-        // Insert means adding some items to "new"
         let prefix_len = common_prefix_len(
           new,
           next_op.new_range(),
@@ -257,10 +285,11 @@ pub fn[T : Eq] shift_diff_ops_down(
           this_op.new_range(),
         )
         if prefix_len > 0 {
-          // merge/add new equal op 
+          // A common prefix exists, so we can shift the operations.
           match ops.get(pointer - 1) {
             Some(DiffOp::Equal(..) as prev_op) => prev_op.grow_right(prefix_len)
             _ => {
+              // Otherwise, create a new `Equal` operation.
               let old_index = this_op.old_range().start
               let new_index = next_op.new_range().start
               let len = prefix_len
@@ -268,9 +297,12 @@ pub fn[T : Eq] shift_diff_ops_down(
               pointer += 1
             }
           }
-          // update this_op and prev_op 
+
+          // Adjust the original operations.
           this_op.shift_right(prefix_len)
           next_op.shrink_right(prefix_len)
+
+          // If the next `Equal` op is now empty, remove it.
           if next_op.is_empty() {
             let _ = ops.remove(pointer + 1)
 
@@ -279,14 +311,14 @@ pub fn[T : Eq] shift_diff_ops_down(
           let _ = ops.remove(pointer + 1)
 
         } else {
-          // can't shift anymore
+          // No common prefix, so we can't shift anymore.
           break
         }
       }
 
-      // Shift Deletes Upwards 
+      // A delete operation is followed by an equal operation.
+      // We can try to shift the delete downwards by finding a common prefix.
       (DiffOp::Delete(..), DiffOp::Equal(..)) => {
-        // Delete means removing some items from "old"
         let prefix_len = common_prefix_len(
           old,
           next_op.old_range(),
@@ -294,10 +326,11 @@ pub fn[T : Eq] shift_diff_ops_down(
           this_op.old_range(),
         )
         if prefix_len > 0 {
-          // merge/add new equal op 
+          // A common prefix exists, so we can shift the operations.
           match ops.get(pointer - 1) {
             Some(DiffOp::Equal(..) as prev_op) => prev_op.grow_right(prefix_len)
             _ => {
+              // Otherwise, create a new `Equal` operation.
               let old_index = this_op.old_range().start
               let new_index = this_op.new_range().start
               let len = prefix_len
@@ -305,8 +338,12 @@ pub fn[T : Eq] shift_diff_ops_down(
               pointer += 1
             }
           }
+
+          // Adjust the original operations.
           this_op.shift_left(prefix_len)
           next_op.shrink_left(prefix_len)
+
+          // If the next `Equal` op is now empty, remove it.
           if next_op.is_empty() {
             let _ = ops.remove(pointer + 1)
 
@@ -315,7 +352,7 @@ pub fn[T : Eq] shift_diff_ops_down(
           let _ = ops.remove(pointer + 1)
 
         } else {
-          // can't shift anymore
+          // No common prefix, so we can't shift anymore.
           break
         }
       }
@@ -325,7 +362,7 @@ pub fn[T : Eq] shift_diff_ops_down(
   pointer
 }
 
-///|
+///| Sorts the captured operations to ensure a consistent order.
 pub fn[D, T] Compact::sort(self : Compact[D, T]) -> Unit {
   fn get_old_new_index(op : DiffOp) -> (Int, Int)? {
     match op {

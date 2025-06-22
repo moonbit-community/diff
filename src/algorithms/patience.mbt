@@ -1,17 +1,34 @@
-///|
+///| An implementation of the Patience diff algorithm.
+
+///| It is designed to produce more human-readable diffs by finding a
+
+///| longest common subsequence of unique lines.
 pub(all) struct Patience[T, D] {
+  // The inner diff hook to which operations are reported.
   d : D
+  // The old sequence.
   old : Array[T]
+  // The current position in the old sequence.
   mut old_current : Int
+  // The end position in the old sequence.
   old_end : Int
+  // A list of unique items from the old sequence, used for finding the LCS.
   old_indexes : Array[UniqueItem[T]]
+  // The new sequence.
   new : Array[T]
+  // The current position in the new sequence.
   mut new_current : Int
+  // The end position in the new sequence.
   new_end : Int
+  // A list of unique items from the new sequence, used for finding the LCS.
   new_indexes : Array[UniqueItem[T]]
 }
 
-///|
+///| The main entry point for the Patience diff algorithm.
+
+///| It finds unique items, calculates the LCS between them using Myers diff,
+
+///| and then diffs the sections between the matching unique items.
 pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   d : D,
   old : Array[T],
@@ -19,6 +36,7 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   new : Array[T],
   new_range : Range
 ) -> Result[Unit, Error] {
+  // First, find all the unique items in both sequences.
   let old_indexes = unique(old, old_range)
   let new_indexes = unique(new, new_range)
   let patience = {
@@ -33,8 +51,9 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
     new_indexes,
   }
   let d = Replace::new(patience)
-  // LIS of match pairs equivalent to LCS of UniqueItems
-  // 先对uniuqe items找到最多的equal
+  // The Longest Increasing Subsequence (LIS) of matching pairs of unique items
+  // is equivalent to the Longest Common Subsequence (LCS) of the unique items.
+  // We use Myers diff to find this LCS.
   let _ = Myers::diff(
     d,
     old_indexes,
@@ -45,7 +64,11 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   Ok(())
 }
 
-///|
+///| This hook is called when a sequence of equal unique items is found.
+
+///| These items act as anchors. We then recursively diff the segments
+
+///| between these anchors.
 impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   self,
   old,
@@ -53,13 +76,14 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   len
 ) {
   let mut i = 0
-  // 对于每一个equal的unique item pair, 使用Myers计算开头到pair之间的内容
+  // For each pair of equal unique items, recursively diff the content
+  // between the last anchor and the current one.
   while i < len {
     let old = old + i
     let new = new + i
     let a0 = self.old_current
     let b0 = self.new_current
-    // 跳过开头相同的内容 
+    // First, skip any common prefix between the last anchor and the current one.
     while self.old_current < self.old_indexes[old].original_index() &&
           self.new_current < self.new_indexes[new].original_index() &&
           self.new[self.new_current] == self.old[self.old_current] {
@@ -70,9 +94,9 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
       let _ = self.d.equal(a0, b0, self.old_current - a0)
 
     }
-    // NoFinishHook can merge results into another diffhook, don't need to call finish
+    // Use `NoFinishHook` to prevent the inner `finish` call from being propagated.
     let no_finish_d = NoFinishHook::new(self.d)
-    // find diff between current to pair index
+    // Diff the region between the last anchor and the current unique item.
     let _ = Myers::diff(
       no_finish_d,
       self.old,
@@ -87,9 +111,11 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   Ok(())
 }
 
-///|
+///| This hook is called when the main diff (on unique items) is finished.
+
+///| We use it to diff the remaining content after the last unique anchor.
 impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with finish(self) {
-  // 最后计算剩余的内容
+  // Diff the remaining content after the last anchor.
   Myers::diff(
     self.d,
     self.old,
@@ -99,7 +125,7 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with finish(self) {
   )
 }
 
-///|
+///| A test for the Patience diff algorithm.
 test "test_patience" {
   let a = [11, 1, 2, 2, 3, 4, 4, 4, 5, 47, 19]
   let b = [10, 1, 2, 2, 8, 9, 4, 4, 7, 47, 18]
@@ -118,7 +144,7 @@ test "test_patience" {
   )
 }
 
-///|
+///| Another test for the Patience diff algorithm.
 test "test_patience_2" {
   let a = [1, 2, 3, 4]
   let b = [1, 2, 3]

@@ -1,22 +1,28 @@
-///|
+///| A `DiffHook` that merges adjacent `Insert` and `Delete` operations
+
+///| into a single `Replace` operation.
 pub(all) struct Replace[D] {
+  // The inner diff hook to which operations are reported.
   d : D
+  // A pending delete operation, if any.
   mut del : (Int, Int, Int)?
+  // A pending insert operation, if any.
   mut ins : (Int, Int, Int)?
+  // A pending equal operation, if any.
   mut eq : (Int, Int, Int)?
 }
 
-///|
+///| Creates a new `Replace` hook.
 pub fn[D : DiffHook] Replace::new(d : D) -> Replace[D] {
   { d, del: None, ins: None, eq: None }
 }
 
-///|
+///| Consumes the `Replace` hook and returns the inner hook.
 pub fn[D : DiffHook] Replace::into_inner(self : Replace[D]) -> D {
   self.d
 }
 
-///|
+///| Flushes any pending `Equal` operation to the inner hook.
 pub fn[D : DiffHook] Replace::flush_eq(
   self : Replace[D]
 ) -> Result[Unit, Error] {
@@ -29,7 +35,9 @@ pub fn[D : DiffHook] Replace::flush_eq(
   }
 }
 
-///|
+///| Flushes any pending `Delete` and `Insert` operations to the inner hook.
+
+///| If both are present, they are merged into a `Replace` operation.
 pub fn[D : DiffHook] Replace::flush_del_ins(
   self : Replace[D]
 ) -> Result[Unit, Error] {
@@ -55,7 +63,9 @@ pub fn[D : DiffHook] Replace::flush_del_ins(
   }
 }
 
-///|
+///| Handles an `Equal` operation.
+
+///| It flushes any pending insert/delete ops and merges consecutive equal ops.
 pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
   self,
   old_index,
@@ -71,7 +81,9 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
   Ok(())
 }
 
-///|
+///| Handles a `Delete` operation.
+
+///| It flushes any pending equal ops and merges consecutive delete ops.
 pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
   self,
   old_index,
@@ -87,7 +99,9 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
   Ok(())
 }
 
-///|
+///| Handles an `Insert` operation.
+
+///| It flushes any pending equal ops and merges consecutive insert ops.
 pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
   self,
   old_index,
@@ -103,7 +117,9 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
   Ok(())
 }
 
-///|
+///| Handles a `Replace` operation.
+
+///| It flushes any pending operations and forwards the replace to the inner hook.
 pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
   self,
   old_index,
@@ -116,14 +132,14 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
   self.d.replace(old_index, old_len, new_index, new_len)
 }
 
-///|
+///| Finishes the diffing process by flushing any remaining pending operations.
 pub impl[D : DiffHook] DiffHook for Replace[D] with finish(self) {
   let _ = self.flush_eq()
   let _ = self.flush_del_ins()
   self.d.finish()
 }
 
-///| 
+///| A test for the `Replace` hook with the Myers algorithm.
 test "test_myers_replace" {
   let a = [
     ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", "a\n", "b\n", "c\n", "================================\n",
@@ -149,7 +165,7 @@ test "test_myers_replace" {
   )
 }
 
-///|
+///| Another test for the `Replace` hook.
 test "test_replace" {
   let a = [0, 1, 2, 3, 4]
   let b = [0, 1, 2, 7, 8, 9]
