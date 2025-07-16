@@ -13,12 +13,12 @@ pub(all) struct Replace[D] {
 }
 
 ///| Creates a new `Replace` hook.
-pub fn[D : DiffHook] Replace::new(d : D) -> Replace[D] {
+pub fn[D] Replace::new(d : D) -> Replace[D] {
   { d, del: None, ins: None, eq: None }
 }
 
 ///| Consumes the `Replace` hook and returns the inner hook.
-pub fn[D : DiffHook] Replace::into_inner(self : Replace[D]) -> D {
+pub fn[D] Replace::into_inner(self : Replace[D]) -> D {
   self.d
 }
 

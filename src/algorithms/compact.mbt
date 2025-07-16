@@ -9,7 +9,7 @@ pub(all) struct Compact[D, T] {
 }
 
 ///| Creates a new `Compact` hook.
-pub fn[D : DiffHook, T] Compact::new(
+pub fn[D, T] Compact::new(
   d : D,
   old : Array[T],
   new : Array[T]
@@ -18,7 +18,7 @@ pub fn[D : DiffHook, T] Compact::new(
 }
 
 ///| Consumes the `Compact` hook and returns the inner hook.
-pub fn[D : DiffHook, T] Compact::into_inner(self : Compact[D, T]) -> D {
+pub fn[D, T] Compact::into_inner(self : Compact[D, T]) -> D {
   self.d
 }
 

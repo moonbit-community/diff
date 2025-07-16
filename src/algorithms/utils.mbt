@@ -29,9 +29,9 @@ impl[T : Eq] Eq for UniqueItem[T] with op_equal(self, other) {
 }
 
 ///| Implements display formatting for `UniqueItem`.
-impl[T : Show] Show for UniqueItem[T] with output(self, logger) {
-  self.value().output(logger)
-}
+// impl[T : Show] Show for UniqueItem[T] with output(self, logger) {
+//   self.value().output(logger)
+// }
 
 ///| Finds all unique items in a given range of a sequence.
 
@@ -67,7 +67,7 @@ pub fn[T : Eq] common_prefix_len(
   if old_range.is_empty() || new_range.is_empty() {
     return 0
   }
-  let length = @math.minimum(
+  let length = @cmp.minimum(
     old_range.end - old_range.start,
     new_range.end - new_range.start,
   )
@@ -103,7 +103,7 @@ pub fn[T : Eq] common_suffix_len(
   if old_range.is_empty() || new_range.is_empty() {
     return 0
   }
-  let length = @math.minimum(
+  let length = @cmp.minimum(
     old_range.end - old_range.start,
     new_range.end - new_range.start,
   )

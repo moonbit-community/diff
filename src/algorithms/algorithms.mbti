@@ -29,9 +29,9 @@ pub(all) struct Compact[D, T] {
   old : Array[T]
   new : Array[T]
 }
-fn[D : DiffHook, T] Compact::into_inner(Self[D, T]) -> D
+fn[D, T] Compact::into_inner(Self[D, T]) -> D
 fn[D, T] Compact::into_ops(Self[D, T]) -> Array[DiffOp]
-fn[D : DiffHook, T] Compact::new(D, Array[T], Array[T]) -> Self[D, T]
+fn[D, T] Compact::new(D, Array[T], Array[T]) -> Self[D, T]
 fn[D, T] Compact::sort(Self[D, T]) -> Unit
 impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T]
 
@@ -97,8 +97,8 @@ pub(all) struct Replace[D] {
 }
 fn[D : DiffHook] Replace::flush_del_ins(Self[D]) -> Result[Unit, Error]
 fn[D : DiffHook] Replace::flush_eq(Self[D]) -> Result[Unit, Error]
-fn[D : DiffHook] Replace::into_inner(Self[D]) -> D
-fn[D : DiffHook] Replace::new(D) -> Self[D]
+fn[D] Replace::into_inner(Self[D]) -> D
+fn[D] Replace::new(D) -> Self[D]
 impl[D : DiffHook] DiffHook for Replace[D]
 
 type UniqueItem[T]

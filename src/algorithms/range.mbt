@@ -16,7 +16,7 @@ pub fn Range::is_empty(self : Range) -> Bool {
 
 ///| Returns the length of the range.
 pub fn Range::len(self : Range) -> Int {
-  @math.maximum(self.end - self.start, 0)
+  @cmp.maximum(self.end - self.start, 0)
 }
 
 ///| Returns an iterator over the values in the range.
