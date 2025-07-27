@@ -12,7 +12,7 @@ pub(all) struct Compact[D, T] {
 pub fn[D, T] Compact::new(
   d : D,
   old : Array[T],
-  new : Array[T]
+  new : Array[T],
 ) -> Compact[D, T] {
   { d, ops: Array::new(), old, new }
 }
@@ -32,7 +32,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
   self,
   old_index,
   new_index,
-  len
+  len,
 ) -> Result[Unit, Error] {
   self.ops.push(DiffOp::Equal(old_index~, new_index~, len~))
   Ok(())
@@ -43,7 +43,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
   self,
   old_index,
   old_len,
-  new_index
+  new_index,
 ) -> Result[Unit, Error] {
   self.ops.push(DiffOp::Delete(old_index~, old_len~, new_index~))
   Ok(())
@@ -54,7 +54,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
   self,
   old_index,
   new_index,
-  new_len
+  new_len,
 ) -> Result[Unit, Error] {
   self.ops.push(DiffOp::Insert(old_index~, new_index~, new_len~))
   Ok(())
@@ -82,7 +82,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> R
 pub fn[T : Eq] cleanup_diff_ops(
   old : Array[T],
   new : Array[T],
-  ops : Array[DiffOp]
+  ops : Array[DiffOp],
 ) -> Unit {
   // First, shift all delete operations up and down.
   let mut pointer = 0
@@ -119,7 +119,7 @@ pub fn[T : Eq] shift_diff_ops_up(
   ops : Array[DiffOp],
   old : Array[T],
   new : Array[T],
-  pointer : Int
+  pointer : Int,
 ) -> Int {
   let mut pointer = pointer
   while pointer > 1 {
@@ -246,7 +246,7 @@ pub fn[T : Eq] shift_diff_ops_down(
   ops : Array[DiffOp],
   old : Array[T],
   new : Array[T],
-  pointer : Int
+  pointer : Int,
 ) -> Int {
   let mut pointer = pointer
   while pointer < ops.length() - 1 {

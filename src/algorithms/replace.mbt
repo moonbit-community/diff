@@ -24,7 +24,7 @@ pub fn[D] Replace::into_inner(self : Replace[D]) -> D {
 
 ///| Flushes any pending `Equal` operation to the inner hook.
 pub fn[D : DiffHook] Replace::flush_eq(
-  self : Replace[D]
+  self : Replace[D],
 ) -> Result[Unit, Error] {
   match self.eq {
     Some((old_index, new_index, len)) => {
@@ -39,7 +39,7 @@ pub fn[D : DiffHook] Replace::flush_eq(
 
 ///| If both are present, they are merged into a `Replace` operation.
 pub fn[D : DiffHook] Replace::flush_del_ins(
-  self : Replace[D]
+  self : Replace[D],
 ) -> Result[Unit, Error] {
   match self.del {
     Some((del_old_index, del_len, del_new_index)) => {
@@ -70,7 +70,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
   self,
   old_index,
   new_index,
-  len
+  len,
 ) {
   let _ = self.flush_del_ins()
   self.eq = match self.eq {
@@ -88,7 +88,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
   self,
   old_index,
   old_len,
-  new_index
+  new_index,
 ) {
   let _ = self.flush_eq()
   match self.del {
@@ -106,7 +106,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
   self,
   old_index,
   new_index,
-  new_len
+  new_len,
 ) {
   let _ = self.flush_eq()
   match self.ins {
@@ -125,7 +125,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
   old_index,
   old_len,
   new_index,
-  new_len
+  new_len,
 ) {
   let _ = self.flush_eq()
   let _ = self.flush_del_ins()

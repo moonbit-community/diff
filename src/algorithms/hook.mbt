@@ -31,7 +31,7 @@ impl DiffHook with equal(
   _self : Self,
   _old_index : Int,
   _new_index : Int,
-  _len : Int
+  _len : Int,
 ) -> Result[Unit, Error] {
   Ok(())
 }
@@ -41,7 +41,7 @@ impl DiffHook with delete(
   _self : Self,
   _old_index : Int,
   _old_len : Int,
-  _new_index : Int
+  _new_index : Int,
 ) -> Result[Unit, Error] {
   Ok(())
 }
@@ -51,7 +51,7 @@ impl DiffHook with insert(
   _self : Self,
   _old_index : Int,
   _new_index : Int,
-  _new_len : Int
+  _new_len : Int,
 ) -> Result[Unit, Error] {
   Ok(())
 }
@@ -62,7 +62,7 @@ impl DiffHook with replace(
   _old_index : Int,
   _old_len : Int,
   _new_index : Int,
-  _new_len : Int
+  _new_len : Int,
 ) -> Result[Unit, Error] {
   Ok(())
 }
@@ -94,7 +94,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with equal(
   self,
   old_index,
   new_index,
-  len
+  len,
 ) {
   self.d.equal(old_index, new_index, len)
 }
@@ -104,7 +104,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with delete(
   self,
   old_index,
   old_len,
-  new_index
+  new_index,
 ) {
   self.d.delete(old_index, old_len, new_index)
 }
@@ -114,7 +114,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with insert(
   self,
   old_index,
   new_index,
-  new_len
+  new_len,
 ) {
   self.d.insert(old_index, new_index, new_len)
 }
@@ -125,7 +125,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with replace(
   old_index,
   old_len,
   new_index,
-  new_len
+  new_len,
 ) {
   self.d.replace(old_index, old_len, new_index, new_len)
 }

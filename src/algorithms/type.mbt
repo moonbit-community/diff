@@ -18,7 +18,7 @@ pub(all) enum DiffOp {
 ///| Applies the given `DiffOp` to a `DiffHook`.
 pub fn[D : DiffHook] DiffOp::apply_to_hook(
   self : Self,
-  d : D
+  d : D,
 ) -> Result[Unit, Error] {
   match self {
     Equal(old_index~, new_index~, len~) => d.equal(old_index, new_index, len)
@@ -110,7 +110,7 @@ pub fn DiffOp::shrink_right(self : Self, adjust : Int) -> Unit {
 fn DiffOp::adjust(
   self : Self,
   adjust_offset : (Int, Bool),
-  adjust_len : (Int, Bool)
+  adjust_len : (Int, Bool),
 ) -> Unit {
   // false means grow, true means shrink
   fn modify(val : Int, adjust : (Int, Bool)) -> Int {

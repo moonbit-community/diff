@@ -50,7 +50,7 @@ pub fn[T : Eq, D : DiffHook] Myers::diff(
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range
+  new_range : Range,
 ) -> Result[Unit, Error] {
   let max_d = max_d(old_range.len(), new_range.len())
   let vb = V::new(max_d)
@@ -74,7 +74,7 @@ fn[T : Eq] find_middle_snake(
   new : Array[T],
   new_range : Range,
   vf : V, // forward v
-  vb : V // backward v
+  vb : V, // backward v
 ) -> (Int, Int)? {
   let n = old_range.len()
   let m = new_range.len()
@@ -169,7 +169,7 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   new : Array[T],
   new_range : Range,
   vf : V, // forward v
-  vb : V // backward v
+  vb : V, // backward v
 ) -> Result[Unit, Error] {
   // First, strip any common prefix and report it as `Equal`.
   let common_prefix_len = common_prefix_len(old, old_range, new, new_range)

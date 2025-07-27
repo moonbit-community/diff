@@ -28,7 +28,7 @@ pub impl DiffHook for Capture with equal(
   self : Capture,
   old_index : Int,
   new_index : Int,
-  len : Int
+  len : Int,
 ) -> Result[Unit, Error] {
   self.inner().push(DiffOp::Equal(old_index~, new_index~, len~))
   Ok(())
@@ -39,7 +39,7 @@ pub impl DiffHook for Capture with delete(
   self : Capture,
   old_index : Int,
   old_len : Int,
-  new_index : Int
+  new_index : Int,
 ) -> Result[Unit, Error] {
   self.inner().push(DiffOp::Delete(old_index~, old_len~, new_index~))
   Ok(())
@@ -50,7 +50,7 @@ pub impl DiffHook for Capture with insert(
   self : Capture,
   old_index : Int,
   new_index : Int,
-  new_len : Int
+  new_len : Int,
 ) -> Result[Unit, Error] {
   self.inner().push(DiffOp::Insert(old_index~, new_index~, new_len~))
   Ok(())
@@ -62,7 +62,7 @@ pub impl DiffHook for Capture with replace(
   old_index : Int,
   old_len : Int,
   new_index : Int,
-  new_len : Int
+  new_len : Int,
 ) -> Result[Unit, Error] {
   self.inner().push(DiffOp::Replace(old_index~, old_len~, new_index~, new_len~))
   Ok(())

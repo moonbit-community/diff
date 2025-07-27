@@ -38,7 +38,7 @@ impl[T : Eq] Eq for UniqueItem[T] with op_equal(self, other) {
 ///| An item is considered unique if it appears exactly once.
 pub fn[T : Eq + Hash] unique(
   array : Array[T],
-  range : Range
+  range : Range,
 ) -> Array[UniqueItem[T]] {
   let map : @hashmap.T[T, Int?] = @hashmap.new()
   for i in range {
@@ -62,7 +62,7 @@ pub fn[T : Eq] common_prefix_len(
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range
+  new_range : Range,
 ) -> Int {
   if old_range.is_empty() || new_range.is_empty() {
     return 0
@@ -98,7 +98,7 @@ pub fn[T : Eq] common_suffix_len(
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range
+  new_range : Range,
 ) -> Int {
   if old_range.is_empty() || new_range.is_empty() {
     return 0

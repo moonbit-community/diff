@@ -50,7 +50,7 @@ pub fn[T : Eq + Show] print_diff_line(old : Array[T], new : Array[T]) -> Unit {
 pub fn[T : Show] print_diff_ops(
   old : Array[T],
   new : Array[T],
-  ops : Array[DiffOp]
+  ops : Array[DiffOp],
 ) -> Unit {
   for op in ops {
     match op {
@@ -96,7 +96,7 @@ pub fn[T : Show] print_diff_ops(
 ///| to produce a more readable and concise result.
 pub fn[T : Eq] diff_with_compact(
   old : Array[T],
-  new : Array[T]
+  new : Array[T],
 ) -> Array[DiffOp] {
   let d = Compact::new(Replace::new(Capture::new()), old, new)
   let _ = @algorithms.Myers::diff(

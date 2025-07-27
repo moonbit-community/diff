@@ -34,7 +34,7 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range
+  new_range : Range,
 ) -> Result[Unit, Error] {
   // First, find all the unique items in both sequences.
   let old_indexes = unique(old, old_range)
@@ -73,7 +73,7 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   self,
   old,
   new,
-  len
+  len,
 ) {
   let mut i = 0
   // For each pair of equal unique items, recursively diff the content
