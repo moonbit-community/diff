@@ -96,7 +96,7 @@ pub fn[T : Eq, D : DiffHook] Myers::diff(
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range
+  new_range : Range,
 ) -> Result[Unit, Error] {
   let max_d = max_d(old_range.len(), new_range.len())
   let vb = V::new(max_d)

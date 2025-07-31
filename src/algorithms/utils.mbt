@@ -65,7 +65,7 @@ impl[T : Eq] Eq for UniqueItem[T] with op_equal(self, other) {
 /// @return Array of unique items with their original indices
 pub fn[T : Eq + Hash] unique(
   array : Array[T],
-  range : Range
+  range : Range,
 ) -> Array[UniqueItem[T]] {
   // Step 1: Build frequency map
   let map : @hashmap.T[T, Int?] = @hashmap.new()
