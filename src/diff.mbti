@@ -18,6 +18,8 @@ fn[T : Eq + Show] print_diff_line(Array[T], Array[T]) -> Unit
 
 fn[T : Show] print_diff_ops(Array[T], Array[T], Array[@algorithms.DiffOp]) -> Unit
 
+// Errors
+
 // Types and methods
 
 // Type aliases

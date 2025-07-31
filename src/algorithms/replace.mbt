@@ -24,7 +24,7 @@ pub fn[D] Replace::into_inner(self : Replace[D]) -> D {
 
 ///| Flushes any pending `Equal` operation to the inner hook.
 pub fn[D : DiffHook] Replace::flush_eq(
-  self : Replace[D]
+  self : Replace[D],
 ) -> Result[Unit, Error] {
   match self.eq {
     Some((old_index, new_index, len)) => {
@@ -39,7 +39,7 @@ pub fn[D : DiffHook] Replace::flush_eq(
 
 ///| If both are present, they are merged into a `Replace` operation.
 pub fn[D : DiffHook] Replace::flush_del_ins(
-  self : Replace[D]
+  self : Replace[D],
 ) -> Result[Unit, Error] {
   match self.del {
     Some((del_old_index, del_len, del_new_index)) => {
@@ -65,12 +65,12 @@ pub fn[D : DiffHook] Replace::flush_del_ins(
 
 ///| Handles an `Equal` operation.
 
-///| It flushes any pending insert/delete ops and merges consecutive equal ops.
+///| Flushes any pending insert/delete ops and merges consecutive equal ops.
 pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
   self,
   old_index,
   new_index,
-  len
+  len,
 ) {
   let _ = self.flush_del_ins()
   self.eq = match self.eq {
@@ -83,12 +83,12 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
 
 ///| Handles a `Delete` operation.
 
-///| It flushes any pending equal ops and merges consecutive delete ops.
+///| Flushes any pending equal ops and merges consecutive delete ops.
 pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
   self,
   old_index,
   old_len,
-  new_index
+  new_index,
 ) {
   let _ = self.flush_eq()
   match self.del {
@@ -101,12 +101,12 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
 
 ///| Handles an `Insert` operation.
 
-///| It flushes any pending equal ops and merges consecutive insert ops.
+///| Flushes any pending equal ops and merges consecutive insert ops.
 pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
   self,
   old_index,
   new_index,
-  new_len
+  new_len,
 ) {
   let _ = self.flush_eq()
   match self.ins {
@@ -119,13 +119,13 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
 
 ///| Handles a `Replace` operation.
 
-///| It flushes any pending operations and forwards the replace to the inner hook.
+///| Flushes any pending operations and forwards the replace to the inner hook.
 pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
   self,
   old_index,
   old_len,
   new_index,
-  new_len
+  new_len,
 ) {
   let _ = self.flush_eq()
   let _ = self.flush_del_ins()

@@ -1,44 +1,77 @@
-///| An implementation of the Patience diff algorithm.
+/// ================================================================================
+/// PATIENCE DIFF ALGORITHM
+/// ================================================================================
+///
+/// The Patience diff algorithm produces more human-readable diffs by focusing on
+/// unique lines as anchor points. It's particularly effective for source code
+/// where unique identifiers (function names, variable names) serve as natural
+/// boundaries.
+///
+/// ALGORITHM OVERVIEW:
+/// 1. Identify unique lines in both sequences (lines that appear exactly once)
+/// 2. Find the Longest Common Subsequence (LCS) of these unique lines
+/// 3. Use these matching unique lines as "anchors"
+/// 4. Recursively apply diff algorithms between anchors
+///
+/// KEY INSIGHT: Unique lines are likely to be meaningful boundaries (function
+/// definitions, class declarations, etc.) that humans expect to see aligned.
+///
+/// TIME COMPLEXITY: O(N log N) where N is the number of unique lines
+/// SPACE COMPLEXITY: O(N)
+///
+/// REFERENCE: Bram Cohen's "Patience Diff" algorithm
 
-///| It is designed to produce more human-readable diffs by finding a
-
-///| longest common subsequence of unique lines.
+///| ================================================================================
+/// PATIENCE DIFF STRUCTURE
+/// ================================================================================
+///
+/// The Patience diff algorithm implementation that wraps another diff hook
+/// to provide enhanced human-readable diffs.
 pub(all) struct Patience[T, D] {
-  // The inner diff hook to which operations are reported.
+  /// Inner diff hook for reporting final operations
   d : D
-  // The old sequence.
+  /// Reference to the old sequence being compared
   old : Array[T]
-  // The current position in the old sequence.
+  /// Current position in old sequence during processing
   mut old_current : Int
-  // The end position in the old sequence.
+  /// End position in old sequence
   old_end : Int
-  // A list of unique items from the old sequence, used for finding the LCS.
+  /// Array of unique items from old sequence (with original indices)
   old_indexes : Array[UniqueItem[T]]
-  // The new sequence.
+  /// Reference to the new sequence being compared
   new : Array[T]
-  // The current position in the new sequence.
+  /// Current position in new sequence during processing
   mut new_current : Int
-  // The end position in the new sequence.
+  /// End position in new sequence
   new_end : Int
-  // A list of unique items from the new sequence, used for finding the LCS.
+  /// Array of unique items from new sequence (with original indices)
   new_indexes : Array[UniqueItem[T]]
 }
 
-///| The main entry point for the Patience diff algorithm.
-
-///| It finds unique items, calculates the LCS between them using Myers diff,
-
-///| and then diffs the sections between the matching unique items.
+///| ================================================================================
+/// MAIN ALGORITHM ENTRY POINT
+/// ================================================================================
+///
+/// Computes the diff using the Patience algorithm
+///
+/// ALGORITHM STEPS:
+/// 1. Extract unique items from both sequences
+/// 2. Find LCS of unique items using Myers algorithm
+/// 3. Use matching unique items as anchors for recursive diffing
+/// 4. Apply Myers algorithm between anchors for detailed differences
 pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   d : D,
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range
+  new_range : Range,
 ) -> Result[Unit, Error] {
-  // First, find all the unique items in both sequences.
+  // Step 1: Identify unique items in both sequences
+  // These will serve as anchor points for the algorithm
   let old_indexes = unique(old, old_range)
   let new_indexes = unique(new, new_range)
+
+  // Create Patience structure to track state during processing
   let patience = {
     d,
     old,
@@ -50,10 +83,10 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
     new_end: new_range.end,
     new_indexes,
   }
+
+  // Step 2: Use Myers algorithm to find LCS of unique items
+  // The LCS of unique items gives us the anchor points
   let d = Replace::new(patience)
-  // The Longest Increasing Subsequence (LIS) of matching pairs of unique items
-  // is equivalent to the Longest Common Subsequence (LCS) of the unique items.
-  // We use Myers diff to find this LCS.
   let _ = Myers::diff(
     d,
     old_indexes,
@@ -64,39 +97,55 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   Ok(())
 }
 
-///| This hook is called when a sequence of equal unique items is found.
+/// ================================================================================
+/// DIFF HOOK IMPLEMENTATION FOR ANCHOR PROCESSING
+/// ================================================================================
+///
+/// These implementations handle the processing when unique items (anchors)
+/// are found to match between sequences.
 
-///| These items act as anchors. We then recursively diff the segments
-
-///| between these anchors.
+///| Called when a sequence of matching unique items (anchors) is found
+///
+/// PROCESSING STRATEGY:
+/// 1. Skip any common prefix between last anchor and current anchor
+/// 2. Report the common prefix as Equal operations
+/// 3. Recursively diff the region between anchors using Myers algorithm
+/// 4. Move to the next anchor point
 impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   self,
   old,
   new,
-  len
+  len,
 ) {
   let mut i = 0
-  // For each pair of equal unique items, recursively diff the content
-  // between the last anchor and the current one.
+
+  // Process each matching pair of unique items (anchors)
   while i < len {
     let old = old + i
     let new = new + i
+
+    // Save starting positions for potential common prefix
     let a0 = self.old_current
     let b0 = self.new_current
-    // First, skip any common prefix between the last anchor and the current one.
+
+    // Step 1: Skip common prefix between anchors
+    // This handles cases where there are additional matches between anchors
     while self.old_current < self.old_indexes[old].original_index() &&
           self.new_current < self.new_indexes[new].original_index() &&
           self.new[self.new_current] == self.old[self.old_current] {
       self.old_current += 1
       self.new_current += 1
     }
+
+    // Step 2: Report any common prefix found
     if self.old_current > a0 {
       let _ = self.d.equal(a0, b0, self.old_current - a0)
 
     }
-    // Use `NoFinishHook` to prevent the inner `finish` call from being propagated.
+
+    // Step 3: Recursively diff the region between anchors
+    // Use Myers algorithm for detailed differences between anchor points
     let no_finish_d = NoFinishHook::new(self.d)
-    // Diff the region between the last anchor and the current unique item.
     let _ = Myers::diff(
       no_finish_d,
       self.old,
@@ -104,6 +153,8 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
       self.new,
       Range::new(self.new_current, self.new_indexes[new].original_index()),
     )
+
+    // Step 4: Move to the anchor position
     self.old_current = self.old_indexes[old].original_index()
     self.new_current = self.new_indexes[new].original_index()
     i += 1
@@ -111,11 +162,12 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   Ok(())
 }
 
-///| This hook is called when the main diff (on unique items) is finished.
-
-///| We use it to diff the remaining content after the last unique anchor.
+///| Called when the LCS of unique items is complete
+///
+/// PROCESSING STRATEGY:
+/// Handle any remaining content after the last anchor point
 impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with finish(self) {
-  // Diff the remaining content after the last anchor.
+  // Diff any remaining content after the last anchor
   Myers::diff(
     self.d,
     self.old,
@@ -125,7 +177,8 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with finish(self) {
   )
 }
 
-///| A test for the Patience diff algorithm.
+///| Test Patience algorithm with complex changes including duplicates
+/// Expected: Uses unique values (11, 47, 19 vs 10, 47, 18) as anchors
 test "test_patience" {
   let a = [11, 1, 2, 2, 3, 4, 4, 4, 5, 47, 19]
   let b = [10, 1, 2, 2, 8, 9, 4, 4, 7, 47, 18]
@@ -144,7 +197,8 @@ test "test_patience" {
   )
 }
 
-///| Another test for the Patience diff algorithm.
+///| Test Patience algorithm with simple deletion at the end
+/// Expected: Uses unique values as anchors, handles simple deletion
 test "test_patience_2" {
   let a = [1, 2, 3, 4]
   let b = [1, 2, 3]

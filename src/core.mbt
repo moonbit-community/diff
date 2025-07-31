@@ -1,4 +1,4 @@
-///|
+///| Type aliases for core diff components
 typealias @algorithms.Range
 
 ///|
@@ -15,9 +15,7 @@ typealias @algorithms.Compact
 
 ///| Computes the difference between two arrays of `T`.
 
-///| This is the main entry point for the standard diffing logic.
-
-///| It uses the Myers algorithm with the `Replace` hook by default.
+///| Main entry point for standard diffing logic using Myers algorithm with `Replace` hook.
 pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[DiffOp] {
   let d = Replace::new(Capture::new())
   let _ = @algorithms.Myers::diff(
@@ -50,7 +48,7 @@ pub fn[T : Eq + Show] print_diff_line(old : Array[T], new : Array[T]) -> Unit {
 pub fn[T : Show] print_diff_ops(
   old : Array[T],
   new : Array[T],
-  ops : Array[DiffOp]
+  ops : Array[DiffOp],
 ) -> Unit {
   for op in ops {
     match op {
@@ -96,7 +94,7 @@ pub fn[T : Show] print_diff_ops(
 ///| to produce a more readable and concise result.
 pub fn[T : Eq] diff_with_compact(
   old : Array[T],
-  new : Array[T]
+  new : Array[T],
 ) -> Array[DiffOp] {
   let d = Compact::new(Replace::new(Capture::new()), old, new)
   let _ = @algorithms.Myers::diff(
@@ -109,7 +107,7 @@ pub fn[T : Eq] diff_with_compact(
   d.into_ops()
 }
 
-///|
+///| Test basic diff functionality
 test "test_diff" {
   let a = [1, 2, 3, 4, 5, 8, 9]
   let b = [1, 2, 0, 4, 5, 6, 7]
@@ -120,14 +118,14 @@ test "test_diff" {
   )
 }
 
-///|
+///| Test line-by-line diff printing
 test "test_print_diff_line" {
   let old = ["0", "1", "2", "3", "4", "5"]
   let new = ["9", "1", "2", "5", "6", "7"]
   print_diff_line(old, new)
 }
 
-///|
+///| Test compact diff functionality
 test "test_diff_with_compact" {
   let old = "a b c d".to_array()
   let new = "a b d c".to_array()

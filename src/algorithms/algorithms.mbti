@@ -14,6 +14,8 @@ fn[T : Eq] shift_diff_ops_up(Array[DiffOp], Array[T], Array[T], Int) -> Int
 
 fn[T : Eq + Hash] unique(Array[T], Range) -> Array[UniqueItem[T]]
 
+// Errors
+
 // Types and methods
 type Capture
 fn Capture::into_ops(Self) -> Array[DiffOp]
@@ -57,7 +59,7 @@ impl Eq for DiffOp
 impl Hash for DiffOp
 impl Show for DiffOp
 
-type Myers
+pub type Myers
 fn[T : Eq, D : DiffHook] Myers::diff(D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
 
 pub(all) struct NoFinishHook[D] {

@@ -18,7 +18,7 @@ pub(all) enum DiffOp {
 ///| Applies the given `DiffOp` to a `DiffHook`.
 pub fn[D : DiffHook] DiffOp::apply_to_hook(
   self : Self,
-  d : D
+  d : D,
 ) -> Result[Unit, Error] {
   match self {
     Equal(old_index~, new_index~, len~) => d.equal(old_index, new_index, len)
@@ -66,53 +66,54 @@ pub fn DiffOp::is_empty(self : Self) -> Bool {
 
 ///| Shifts the operation to the left by a given amount.
 
-///| This is used by the `Compact` hook to merge operations.
+///| Used by the `Compact` hook to merge operations.
 pub fn DiffOp::shift_left(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, true), (0, false))
 }
 
 ///| Shifts the operation to the right by a given amount.
 
-///| This is used by the `Compact` hook to merge operations.
+///| Used by the `Compact` hook to merge operations.
 pub fn DiffOp::shift_right(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, false), (0, false))
 }
 
 ///| Grows the operation to the left by a given amount.
 
-///| This is used by the `Compact` hook to merge operations.
+///| Used by the `Compact` hook to merge operations.
 pub fn DiffOp::grow_left(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, true), (adjust, false))
 }
 
 ///| Grows the operation to the right by a given amount.
 
-///| This is used by the `Compact` hook to merge operations.
+///| Used by the `Compact` hook to merge operations.
 pub fn DiffOp::grow_right(self : Self, adjust : Int) -> Unit {
   self.adjust((0, false), (adjust, false))
 }
 
 ///| Shrinks the operation from the left by a given amount.
 
-///| This is used by the `Compact` hook to merge operations.
+///| Used by the `Compact` hook to merge operations.
 pub fn DiffOp::shrink_left(self : Self, adjust : Int) -> Unit {
   self.adjust((0, false), (adjust, false))
 }
 
 ///| Shrinks the operation from the right by a given amount.
 
-///| This is used by the `Compact` hook to merge operations.
+///| Used by the `Compact` hook to merge operations.
 pub fn DiffOp::shrink_right(self : Self, adjust : Int) -> Unit {
   self.adjust((adjust, false), (adjust, true))
 }
 
-///| A helper function to adjust the offsets and lengths of an operation.
+///| Helper function to adjust the offsets and lengths of an operation.
+
+///| false means grow, true means shrink
 fn DiffOp::adjust(
   self : Self,
   adjust_offset : (Int, Bool),
-  adjust_len : (Int, Bool)
+  adjust_len : (Int, Bool),
 ) -> Unit {
-  // false means grow, true means shrink
   fn modify(val : Int, adjust : (Int, Bool)) -> Int {
     if adjust.1 {
       val - adjust.0
