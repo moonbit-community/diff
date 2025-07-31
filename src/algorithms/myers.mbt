@@ -96,7 +96,7 @@ pub fn[T : Eq, D : DiffHook] Myers::diff(
   old : Array[T],
   old_range : Range,
   new : Array[T],
-  new_range : Range,
+  new_range : Range
 ) -> Result[Unit, Error] {
   let max_d = max_d(old_range.len(), new_range.len())
   let vb = V::new(max_d)
@@ -228,8 +228,8 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   old_range : Range,
   new : Array[T],
   new_range : Range,
-  vf : V,
-  vb : V,
+  vf : V, // forward v
+  vb : V, // backward v
 ) -> Result[Unit, Error] {
   // Step 1: Strip common prefix (matches at the beginning)
   let common_prefix_len = common_prefix_len(old, old_range, new, new_range)
