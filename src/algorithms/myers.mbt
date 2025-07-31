@@ -17,7 +17,7 @@
 /// TIME COMPLEXITY: O((M+N)D) where M and N are sequence lengths, D is edit distance
 /// SPACE COMPLEXITY: O(M+N)
 ///
-/// REFERENCE: "An O(ND) Difference Algorithm and Its Variations" by Eugene W. Myers
+/// REFERENCE: "An O(N * D) Difference Algorithm and Its Variations" by Eugene W. Myers
 
 ///| The Myers diff algorithm implementation type
 pub type Myers
