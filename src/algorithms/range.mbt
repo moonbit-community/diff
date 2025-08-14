@@ -98,26 +98,3 @@ pub fn Range::iter(self : Range) -> Iter[Int] {
 ///
 /// Additional utility methods that could be useful for range manipulation
 /// These are not currently used but demonstrate the mathematical properties
-
-///| Creates the intersection of two ranges
-/// @return Range representing the overlap, or empty range if no overlap
-fn Range::intersect(self : Range, other : Range) -> Range {
-  let start = @cmp.maximum(self.start, other.start)
-  let end = @cmp.minimum(self.end, other.end)
-  Range::new(start, end)
-}
-
-///| Creates the union of two ranges (smallest range containing both)
-/// @return Range spanning both input ranges
-fn Range::union(self : Range, other : Range) -> Range {
-  let start = @cmp.minimum(self.start, other.start)
-  let end = @cmp.maximum(self.end, other.end)
-  Range::new(start, end)
-}
-
-///| Splits the range at a given point
-/// @param at The split point (must be within range)
-/// @return Tuple of (left_range, right_range)
-fn Range::split_at(self : Range, at : Int) -> (Range, Range) {
-  (Range::new(self.start, at), Range::new(at, self.end))
-}

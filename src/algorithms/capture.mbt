@@ -21,7 +21,7 @@
 ///
 /// A simple wrapper around Array[DiffOp] that implements the DiffHook interface
 /// This allows it to collect operations from any diff algorithm
-type Capture Array[DiffOp] derive(Default)
+struct Capture(Array[DiffOp]) derive(Default)
 
 /// ================================================================================
 /// CONSTRUCTION METHODS
