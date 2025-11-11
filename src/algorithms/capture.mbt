@@ -41,7 +41,7 @@ pub fn Capture::new() -> Capture {
 ///
 /// @return Array of all captured diff operations
 pub fn Capture::into_ops(self : Capture) -> Array[DiffOp] {
-  self.inner()
+  self.0
 }
 
 ///|
@@ -49,7 +49,7 @@ pub fn Capture::into_ops(self : Capture) -> Array[DiffOp] {
 ///
 /// @return Iterator yielding each captured operation in order
 pub fn Capture::to_iter(self : Capture) -> Iter[DiffOp] {
-  self.inner().iter()
+  self.0.iter()
 }
 
 ///|
@@ -57,7 +57,7 @@ pub fn Capture::to_iter(self : Capture) -> Iter[DiffOp] {
 ///
 /// @return Reference to the underlying operations array
 pub fn Capture::ops(self : Capture) -> Array[DiffOp] {
-  self.inner()
+  self.0
 }
 
 /// ================================================================================
@@ -79,7 +79,7 @@ pub impl DiffHook for Capture with equal(
   new_index : Int,
   len : Int,
 ) -> Result[Unit, Error] {
-  self.inner().push(DiffOp::Equal(old_index~, new_index~, len~))
+  self.0.push(DiffOp::Equal(old_index~, new_index~, len~))
   Ok(())
 }
 
@@ -95,7 +95,7 @@ pub impl DiffHook for Capture with delete(
   old_len : Int,
   new_index : Int,
 ) -> Result[Unit, Error] {
-  self.inner().push(DiffOp::Delete(old_index~, old_len~, new_index~))
+  self.0.push(DiffOp::Delete(old_index~, old_len~, new_index~))
   Ok(())
 }
 
@@ -111,7 +111,7 @@ pub impl DiffHook for Capture with insert(
   new_index : Int,
   new_len : Int,
 ) -> Result[Unit, Error] {
-  self.inner().push(DiffOp::Insert(old_index~, new_index~, new_len~))
+  self.0.push(DiffOp::Insert(old_index~, new_index~, new_len~))
   Ok(())
 }
 
@@ -129,7 +129,7 @@ pub impl DiffHook for Capture with replace(
   new_index : Int,
   new_len : Int,
 ) -> Result[Unit, Error] {
-  self.inner().push(DiffOp::Replace(old_index~, old_len~, new_index~, new_len~))
+  self.0.push(DiffOp::Replace(old_index~, old_len~, new_index~, new_len~))
   Ok(())
 }
 
