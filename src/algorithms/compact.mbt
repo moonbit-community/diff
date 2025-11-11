@@ -21,7 +21,8 @@
 /// TIME COMPLEXITY: O(N²) where N is the number of operations
 /// SPACE COMPLEXITY: O(N)
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// COMPACT DIFF STRUCTURE
 /// ================================================================================
 ///
@@ -38,7 +39,8 @@ pub(all) struct Compact[D, T] {
   new : Array[T]
 }
 
-///| Creates a new Compact hook that wraps the provided diff hook
+///|
+/// Creates a new Compact hook that wraps the provided diff hook
 pub fn[D, T] Compact::new(
   d : D,
   old : Array[T],
@@ -47,12 +49,14 @@ pub fn[D, T] Compact::new(
   { d, ops: Array::new(), old, new }
 }
 
-///| Consumes the Compact hook and returns the inner hook
+///|
+/// Consumes the Compact hook and returns the inner hook
 pub fn[D, T] Compact::into_inner(self : Compact[D, T]) -> D {
   self.d
 }
 
-///| Returns collected operations (for testing purposes)
+///|
+/// Returns collected operations (for testing purposes)
 pub fn[D, T] Compact::into_ops(self : Compact[D, T]) -> Array[DiffOp] {
   self.ops
 }
@@ -63,7 +67,8 @@ pub fn[D, T] Compact::into_ops(self : Compact[D, T]) -> Array[DiffOp] {
 ///
 /// These implementations collect operations during the diff process
 
-///| Captures an Equal operation for later compaction
+///|
+/// Captures an Equal operation for later compaction
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
   self,
   old_index,
@@ -74,7 +79,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
   Ok(())
 }
 
-///| Captures a Delete operation for later compaction
+///|
+/// Captures a Delete operation for later compaction
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
   self,
   old_index,
@@ -85,7 +91,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
   Ok(())
 }
 
-///| Captures an Insert operation for later compaction
+///|
+/// Captures an Insert operation for later compaction
 pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
   self,
   old_index,
@@ -96,7 +103,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
   Ok(())
 }
 
-///| Final processing step - applies compaction algorithms
+///|
+/// Final processing step - applies compaction algorithms
 ///
 /// PROCESSING PIPELINE:
 /// 1. Clean up operations using shift algorithms
@@ -124,7 +132,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> R
 /// COMPACTION ALGORITHMS
 /// ================================================================================
 
-///| Main compaction algorithm that coordinates the cleanup process
+///|
+/// Main compaction algorithm that coordinates the cleanup process
 ///
 /// STRATEGY:
 /// 1. First pass: shift and merge delete operations
@@ -172,7 +181,8 @@ pub fn[T : Eq] cleanup_diff_ops(
 ///
 /// These algorithms shift operations to enable merging and create cleaner diffs
 
-///| Shifts operations upward (earlier) to merge with previous operations
+///|
+/// Shifts operations upward (earlier) to merge with previous operations
 ///
 /// SHIFTING RULES:
 /// 1. Swap insert/delete operations to group similar operations
@@ -298,7 +308,8 @@ pub fn[T : Eq] shift_diff_ops_up(
   pointer
 }
 
-///| Shifts operations downward (later) to merge with following operations
+///|
+/// Shifts operations downward (later) to merge with following operations
 ///
 /// Similar to shift_diff_ops_up but operates in the downward direction
 /// Uses common prefixes instead of suffixes for alignment
@@ -417,7 +428,8 @@ pub fn[T : Eq] shift_diff_ops_down(
   pointer
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// SORTING ALGORITHM
 /// ================================================================================
 ///

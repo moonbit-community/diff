@@ -15,7 +15,8 @@
 /// TIME COMPLEXITY: O(1) per operation, O(N log N) for final sorting
 /// SPACE COMPLEXITY: O(N) where N is the number of operations
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// CAPTURE STRUCTURE
 /// ================================================================================
 ///
@@ -27,28 +28,32 @@ struct Capture(Array[DiffOp]) derive(Default)
 /// CONSTRUCTION METHODS
 /// ================================================================================
 
-///| Creates a new empty Capture hook
+///|
+/// Creates a new empty Capture hook
 ///
 /// @return New Capture instance ready to collect operations
 pub fn Capture::new() -> Capture {
   Capture::default()
 }
 
-///| Consumes the Capture hook and returns the collected operations
+///|
+/// Consumes the Capture hook and returns the collected operations
 ///
 /// @return Array of all captured diff operations
 pub fn Capture::into_ops(self : Capture) -> Array[DiffOp] {
   self.inner()
 }
 
-///| Returns an iterator over the captured operations
+///|
+/// Returns an iterator over the captured operations
 ///
 /// @return Iterator yielding each captured operation in order
 pub fn Capture::to_iter(self : Capture) -> Iter[DiffOp] {
   self.inner().iter()
 }
 
-///| Returns a reference to the captured operations without consuming
+///|
+/// Returns a reference to the captured operations without consuming
 ///
 /// @return Reference to the underlying operations array
 pub fn Capture::ops(self : Capture) -> Array[DiffOp] {
@@ -62,7 +67,8 @@ pub fn Capture::ops(self : Capture) -> Array[DiffOp] {
 /// These methods implement the DiffHook interface to collect operations
 /// Each method simply appends the operation to the internal array
 
-///| Captures an Equal operation indicating unchanged content
+///|
+/// Captures an Equal operation indicating unchanged content
 ///
 /// @param old_index Starting index in old sequence
 /// @param new_index Starting index in new sequence  
@@ -77,7 +83,8 @@ pub impl DiffHook for Capture with equal(
   Ok(())
 }
 
-///| Captures a Delete operation indicating removed content
+///|
+/// Captures a Delete operation indicating removed content
 ///
 /// @param old_index Starting index in old sequence
 /// @param old_len Number of deleted elements
@@ -92,7 +99,8 @@ pub impl DiffHook for Capture with delete(
   Ok(())
 }
 
-///| Captures an Insert operation indicating added content
+///|
+/// Captures an Insert operation indicating added content
 ///
 /// @param old_index Position in old sequence where insertion occurred
 /// @param new_index Starting index in new sequence
@@ -107,7 +115,8 @@ pub impl DiffHook for Capture with insert(
   Ok(())
 }
 
-///| Captures a Replace operation indicating changed content
+///|
+/// Captures a Replace operation indicating changed content
 ///
 /// @param old_index Starting index in old sequence
 /// @param old_len Number of elements replaced
@@ -124,7 +133,8 @@ pub impl DiffHook for Capture with replace(
   Ok(())
 }
 
-///| Final processing step - sorts operations for consistent output
+///|
+/// Final processing step - sorts operations for consistent output
 ///
 /// ALGORITHM: Sorts operations by old sequence position, then new sequence position
 /// This ensures deterministic output regardless of algorithm execution order
@@ -133,7 +143,8 @@ pub impl DiffHook for Capture with finish(self : Capture) -> Result[Unit, Error]
   Ok(())
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// SORTING ALGORITHM
 /// ================================================================================
 ///

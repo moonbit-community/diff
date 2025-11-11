@@ -1,21 +1,23 @@
-///| Type aliases for core diff components
-typealias @algorithms.Range
+///|
+/// Type aliases for core diff components
+using @algorithms {type Range}
 
 ///|
-typealias @algorithms.DiffOp
+using @algorithms {type DiffOp}
 
 ///|
-typealias @algorithms.Replace
+using @algorithms {type Replace}
 
 ///|
-typealias @algorithms.Capture
+using @algorithms {type Capture}
 
 ///|
-typealias @algorithms.Compact
+using @algorithms {type Compact}
 
 ///| Computes the difference between two arrays of `T`.
 
-///| Main entry point for standard diffing logic using Myers algorithm with `Replace` hook.
+///|
+/// Main entry point for standard diffing logic using Myers algorithm with `Replace` hook.
 pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[DiffOp] {
   let d = Replace::new(Capture::new())
   let _ = @algorithms.Myers::diff(
@@ -28,23 +30,27 @@ pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[DiffOp] {
   d.into_inner().into_ops()
 }
 
-///| Computes the difference between two strings, character by character.
+///|
+/// Computes the difference between two strings, character by character.
 pub fn diff_str(old : String, new : String) -> Array[DiffOp] {
   diff(old.to_array(), new.to_array())
 }
 
-///| Computes the difference between two arrays of strings, line by line.
+///|
+/// Computes the difference between two arrays of strings, line by line.
 pub fn diff_line(old : Array[String], new : Array[String]) -> Array[DiffOp] {
   diff(old, new)
 }
 
-///| Computes the diff between two arrays and prints the result in a line-by-line format.
+///|
+/// Computes the diff between two arrays and prints the result in a line-by-line format.
 pub fn[T : Eq + Show] print_diff_line(old : Array[T], new : Array[T]) -> Unit {
   let ops = diff(old, new)
   print_diff_ops(old, new, ops)
 }
 
-///| Prints a formatted diff to the console based on a list of `DiffOp`.
+///|
+/// Prints a formatted diff to the console based on a list of `DiffOp`.
 pub fn[T : Show] print_diff_ops(
   old : Array[T],
   new : Array[T],
@@ -91,7 +97,8 @@ pub fn[T : Show] print_diff_ops(
 
 ///| Computes the difference between two arrays using the `Compact` hook
 
-///| to produce a more readable and concise result.
+///|
+/// to produce a more readable and concise result.
 pub fn[T : Eq] diff_with_compact(
   old : Array[T],
   new : Array[T],
@@ -107,7 +114,8 @@ pub fn[T : Eq] diff_with_compact(
   d.into_ops()
 }
 
-///| Test basic diff functionality
+///|
+/// Test basic diff functionality
 test "test_diff" {
   let a = [1, 2, 3, 4, 5, 8, 9]
   let b = [1, 2, 0, 4, 5, 6, 7]
@@ -118,14 +126,16 @@ test "test_diff" {
   )
 }
 
-///| Test line-by-line diff printing
+///|
+/// Test line-by-line diff printing
 test "test_print_diff_line" {
   let old = ["0", "1", "2", "3", "4", "5"]
   let new = ["9", "1", "2", "5", "6", "7"]
   print_diff_line(old, new)
 }
 
-///| Test compact diff functionality
+///|
+/// Test compact diff functionality
 test "test_diff_with_compact" {
   let old = "a b c d".to_array()
   let new = "a b d c".to_array()
