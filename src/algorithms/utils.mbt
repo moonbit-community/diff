@@ -23,7 +23,8 @@
 ///
 /// USED BY: Patience diff algorithm for finding anchor points
 
-///| Wrapper structure that associates an item with its original index
+///|
+/// Wrapper structure that associates an item with its original index
 /// Used to track positions after filtering unique items
 struct UniqueItem[T] {
   /// Reference to the original array containing the item
@@ -32,27 +33,32 @@ struct UniqueItem[T] {
   index : Int
 }
 
-///| Creates a new UniqueItem with array reference and original index
+///|
+/// Creates a new UniqueItem with array reference and original index
 fn[T] UniqueItem::new(lookup : Array[T], index : Int) -> UniqueItem[T] {
   { lookup, index }
 }
 
-///| Returns the actual value stored at the tracked index
+///|
+/// Returns the actual value stored at the tracked index
 fn[T] UniqueItem::value(self : UniqueItem[T]) -> T {
   self.lookup[self.index]
 }
 
-///| Returns the original index in the source array
+///|
+/// Returns the original index in the source array
 fn[T] UniqueItem::original_index(self : UniqueItem[T]) -> Int {
   self.index
 }
 
-///| Equality comparison based on item values, not indices
+///|
+/// Equality comparison based on item values, not indices
 impl[T : Eq] Eq for UniqueItem[T] with equal(self, other) {
   self.value() == other.value()
 }
 
-///| Finds all unique items in a specified range of an array
+///|
+/// Finds all unique items in a specified range of an array
 ///
 /// ALGORITHM STEPS:
 /// 1. Build frequency map: count occurrences of each value
@@ -106,7 +112,8 @@ pub fn[T : Eq + Hash] unique(
 ///
 /// USED BY: Myers algorithm for finding diagonal edges in edit graph
 
-///| Calculates the length of the common prefix between two sequence ranges
+///|
+/// Calculates the length of the common prefix between two sequence ranges
 ///
 /// @param old First sequence array
 /// @param old_range Range within the first sequence
@@ -156,7 +163,8 @@ pub fn[T : Eq] common_prefix_len(
 ///
 /// USED BY: Myers algorithm for finding diagonal edges in reverse direction
 
-///| Calculates the length of the common suffix between two sequence ranges
+///|
+/// Calculates the length of the common suffix between two sequence ranges
 ///
 /// @param old First sequence array
 /// @param old_range Range within the first sequence
@@ -189,7 +197,8 @@ pub fn[T : Eq] common_suffix_len(
   length // All elements match up to min length
 }
 
-///| Test common prefix detection with identical sequences
+///|
+/// Test common prefix detection with identical sequences
 /// Expected: Should return full length when sequences are identical
 test "common_prefix_len" {
   let old = [1, 2, 3, 4, 5]
@@ -206,7 +215,8 @@ test "common_prefix_len" {
   inspect(common_prefix_len(old, old_range, new, new_range), content="4")
 }
 
-///| Test common suffix detection with identical sequences
+///|
+/// Test common suffix detection with identical sequences
 /// Expected: Should return full length when sequences are identical
 test "common_suffix_len" {
   let old = [1, 2, 3, 4, 5]
