@@ -19,7 +19,8 @@
 ///
 /// REFERENCE: "An O(N * D) Difference Algorithm and Its Variations" by Eugene W. Myers
 
-///| The Myers diff algorithm implementation type
+///|
+/// The Myers diff algorithm implementation type
 pub type Myers
 
 /// ================================================================================
@@ -37,7 +38,8 @@ pub type Myers
 /// - offset: Maps diagonal indices (can be negative) to array indices (must be positive)
 /// - v: Array storing the furthest x-coordinate for each diagonal
 
-///| The V vector for tracking furthest-reaching paths in the edit graph
+///|
+/// The V vector for tracking furthest-reaching paths in the edit graph
 struct V {
   /// Offset to convert diagonal k (can be negative) to array index
   offset : Int
@@ -45,22 +47,26 @@ struct V {
   v : Array[Int]
 }
 
-///| Creates a new V vector with capacity for diagonals from -max_d to +max_d
+///|
+/// Creates a new V vector with capacity for diagonals from -max_d to +max_d
 pub fn V::new(max_d : Int) -> V {
   { offset: max_d, v: Array::make(max_d * 2, 0) }
 }
 
-///| Returns the total capacity of the V vector
+///|
+/// Returns the total capacity of the V vector
 pub fn V::len(self : V) -> Int {
   self.v.length()
 }
 
-///| Gets the x-coordinate for diagonal k
+///|
+/// Gets the x-coordinate for diagonal k
 pub fn V::op_get(self : V, i : Int) -> Int {
   self.v[i + self.offset]
 }
 
-///| Sets the x-coordinate for diagonal k
+///|
+/// Sets the x-coordinate for diagonal k
 pub fn V::op_set(self : V, i : Int, value : Int) -> Unit {
   self.v[i + self.offset] = value
 }
@@ -69,19 +75,22 @@ pub fn V::op_set(self : V, i : Int, value : Int) -> Unit {
 /// UTILITY FUNCTIONS
 /// ================================================================================
 
-///| Calculates the maximum possible edit distance needed
+///|
+/// Calculates the maximum possible edit distance needed
 /// This bounds the search space for the algorithm
 fn max_d(len1 : Int, len2 : Int) -> Int {
   (len1 + len2 + 1) / 2 + 1
 }
 
-///| Splits a range into two parts at a given point
+///|
+/// Splits a range into two parts at a given point
 /// Used in divide-and-conquer step
 fn split_at(range : Range, at : Int) -> (Range, Range) {
   (Range::new(range.start, at), Range::new(at, range.end))
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// MAIN ALGORITHM ENTRY POINT
 /// ================================================================================
 ///
@@ -105,7 +114,8 @@ pub fn[T : Eq, D : DiffHook] Myers::diff(
   d.finish()
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// MIDDLE SNAKE DETECTION
 /// ================================================================================
 ///
@@ -210,7 +220,8 @@ fn[T : Eq] find_middle_snake(
   None
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// DIVIDE-AND-CONQUER STRATEGY
 /// ================================================================================
 ///
@@ -290,7 +301,8 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   Ok(())
 }
 
-///| Test middle snake detection with classic example
+///|
+/// Test middle snake detection with classic example
 /// Expected: middle snake starts at (4,1) in "ABCABBA" vs "CBABAC"
 test "test_middle_snake" {
   let a = "ABCABBA".to_array()
@@ -315,7 +327,8 @@ test "test_middle_snake" {
   }
 }
 
-///| Comprehensive test cases for Myers algorithm
+///|
+/// Comprehensive test cases for Myers algorithm
 /// Tests various scenarios: single change, multiple changes, insertions, deletions
 test "test_diff" {
   // Test 1: Single element change

@@ -21,7 +21,8 @@
 ///
 /// REFERENCE: Bram Cohen's "Patience Diff" algorithm
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// PATIENCE DIFF STRUCTURE
 /// ================================================================================
 ///
@@ -48,7 +49,8 @@ pub(all) struct Patience[T, D] {
   new_indexes : Array[UniqueItem[T]]
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// MAIN ALGORITHM ENTRY POINT
 /// ================================================================================
 ///
@@ -104,7 +106,8 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
 /// These implementations handle the processing when unique items (anchors)
 /// are found to match between sequences.
 
-///| Called when a sequence of matching unique items (anchors) is found
+///|
+/// Called when a sequence of matching unique items (anchors) is found
 ///
 /// PROCESSING STRATEGY:
 /// 1. Skip any common prefix between last anchor and current anchor
@@ -162,7 +165,8 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
   Ok(())
 }
 
-///| Called when the LCS of unique items is complete
+///|
+/// Called when the LCS of unique items is complete
 ///
 /// PROCESSING STRATEGY:
 /// Handle any remaining content after the last anchor point
@@ -177,7 +181,8 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with finish(self) {
   )
 }
 
-///| Test Patience algorithm with complex changes including duplicates
+///|
+/// Test Patience algorithm with complex changes including duplicates
 /// Expected: Uses unique values (11, 47, 19 vs 10, 47, 18) as anchors
 test "test_patience" {
   let a = [11, 1, 2, 2, 3, 4, 4, 4, 5, 47, 19]
@@ -197,7 +202,8 @@ test "test_patience" {
   )
 }
 
-///| Test Patience algorithm with simple deletion at the end
+///|
+/// Test Patience algorithm with simple deletion at the end
 /// Expected: Uses unique values as anchors, handles simple deletion
 test "test_patience_2" {
   let a = [1, 2, 3, 4]
