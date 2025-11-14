@@ -126,14 +126,14 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
   old_len,
   new_index,
   new_len,
-) {
+) -> Result[Unit, Error] {
   let _ = self.flush_eq()
   let _ = self.flush_del_ins()
   self.d.replace(old_index, old_len, new_index, new_len)
 }
 
 ///| Finishes the diffing process by flushing any remaining pending operations.
-pub impl[D : DiffHook] DiffHook for Replace[D] with finish(self) {
+pub impl[D : DiffHook] DiffHook for Replace[D] with finish(self) -> Result[Unit, Error] {
   let _ = self.flush_eq()
   let _ = self.flush_del_ins()
   self.d.finish()
