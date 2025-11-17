@@ -95,7 +95,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with equal(
   old_index,
   new_index,
   len,
-) {
+) -> Result[Unit, Error] {
   self.d.equal(old_index, new_index, len)
 }
 
@@ -105,7 +105,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with delete(
   old_index,
   old_len,
   new_index,
-) {
+) -> Result[Unit, Error] {
   self.d.delete(old_index, old_len, new_index)
 }
 
@@ -115,7 +115,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with insert(
   old_index,
   new_index,
   new_len,
-) {
+) -> Result[Unit, Error] {
   self.d.insert(old_index, new_index, new_len)
 }
 
@@ -126,11 +126,11 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with replace(
   old_len,
   new_index,
   new_len,
-) {
+) -> Result[Unit, Error] {
   self.d.replace(old_index, old_len, new_index, new_len)
 }
 
 ///| Ignores the `finish` call.
-impl[D : DiffHook] DiffHook for NoFinishHook[D] with finish(_self) {
+impl[D : DiffHook] DiffHook for NoFinishHook[D] with finish(_self) -> Result[Unit, Error] {
   Ok(())
 }

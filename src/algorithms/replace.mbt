@@ -71,7 +71,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
   old_index,
   new_index,
   len,
-) {
+) -> Result[Unit, Error] {
   let _ = self.flush_del_ins()
   self.eq = match self.eq {
     Some((eq_old_index, eq_new_index, eq_len)) =>
@@ -89,7 +89,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
   old_index,
   old_len,
   new_index,
-) {
+) -> Result[Unit, Error] {
   let _ = self.flush_eq()
   match self.del {
     Some((del_old_index, del_old_len, del_new_index)) =>
@@ -107,7 +107,7 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
   old_index,
   new_index,
   new_len,
-) {
+) -> Result[Unit, Error] {
   let _ = self.flush_eq()
   match self.ins {
     Some((ins_old_index, ins_new_index, ins_len)) =>
