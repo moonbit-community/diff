@@ -38,21 +38,21 @@ pub fn Capture::new() -> Capture {
 ///
 /// @return Array of all captured diff operations
 pub fn Capture::into_ops(self : Capture) -> Array[DiffOp] {
-  self.0
+  self.inner()
 }
 
 ///| Returns an iterator over the captured operations
 ///
 /// @return Iterator yielding each captured operation in order
 pub fn Capture::to_iter(self : Capture) -> Iter[DiffOp] {
-  self.0.iter()
+  self.inner().iter()
 }
 
 ///| Returns a reference to the captured operations without consuming
 ///
 /// @return Reference to the underlying operations array
 pub fn Capture::ops(self : Capture) -> Array[DiffOp] {
-  self.0
+  self.inner()
 }
 
 /// ================================================================================
@@ -73,7 +73,7 @@ pub impl DiffHook for Capture with equal(
   new_index : Int,
   len : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Equal(old_index~, new_index~, len~))
+  self.inner().push(DiffOp::Equal(old_index~, new_index~, len~))
   Ok(())
 }
 
@@ -88,7 +88,7 @@ pub impl DiffHook for Capture with delete(
   old_len : Int,
   new_index : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Delete(old_index~, old_len~, new_index~))
+  self.inner().push(DiffOp::Delete(old_index~, old_len~, new_index~))
   Ok(())
 }
 
@@ -103,7 +103,7 @@ pub impl DiffHook for Capture with insert(
   new_index : Int,
   new_len : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Insert(old_index~, new_index~, new_len~))
+  self.inner().push(DiffOp::Insert(old_index~, new_index~, new_len~))
   Ok(())
 }
 
@@ -120,7 +120,7 @@ pub impl DiffHook for Capture with replace(
   new_index : Int,
   new_len : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Replace(old_index~, old_len~, new_index~, new_len~))
+  self.inner().push(DiffOp::Replace(old_index~, old_len~, new_index~, new_len~))
   Ok(())
 }
 
@@ -162,7 +162,7 @@ pub fn Capture::sort(self : Capture) -> Unit {
 
   // Apply stable sorting with defined ordering rules
   self
-  .0
+  .inner()
   .sort_by(fn(a : DiffOp, b : DiffOp) -> Int {
     let (a_old, a_new) = get_old_new_index(a).unwrap()
     let (b_old, b_new) = get_old_new_index(b).unwrap()

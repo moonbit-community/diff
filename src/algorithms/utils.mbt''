@@ -48,7 +48,7 @@ fn[T] UniqueItem::original_index(self : UniqueItem[T]) -> Int {
 }
 
 ///| Equality comparison based on item values, not indices
-impl[T : Eq] Eq for UniqueItem[T] with equal(self, other) {
+impl[T : Eq] Eq for UniqueItem[T] with op_equal(self, other) {
   self.value() == other.value()
 }
 
@@ -68,7 +68,7 @@ pub fn[T : Eq + Hash] unique(
   range : Range,
 ) -> Array[UniqueItem[T]] {
   // Step 1: Build frequency map
-  let map : @hashmap.HashMap[T, Int?] = @hashmap.new()
+  let map : @hashmap.T[T, Int?] = @hashmap.new()
   for i in range {
     match map.get(array[i]) {
       None => map[array[i]] = Some(i) // First occurrence
