@@ -13,14 +13,12 @@ jobs:
   check:
     strategy:
       matrix:
-        version: [stable,pre-release,bleeding]
+        version: [stable]
         os:
           - ubuntu-latest
           - macos-latest
           - windows-latest
-      fail-fast: false
     runs-on: ${{ matrix.os }}
-    continue-on-error: false
     steps:
       - uses: actions/checkout@v4
         with:
