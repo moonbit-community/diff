@@ -1,18 +1,12 @@
 ///|
 /// Type aliases for core diff components
-using @algorithms {type Range}
-
-///|
-using @algorithms {type DiffOp}
-
-///|
-using @algorithms {type Replace}
-
-///|
-using @algorithms {type Capture}
-
-///|
-using @algorithms {type Compact}
+using @algorithms {
+  type Range,
+  type DiffOp,
+  type Replace,
+  type Capture,
+  type Compact,
+}
 
 ///| Computes the difference between two arrays of `T`.
 

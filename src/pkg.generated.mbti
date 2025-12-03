@@ -6,17 +6,17 @@ import(
 )
 
 // Values
-fn[T : Eq] diff(Array[T], Array[T]) -> Array[@algorithms.DiffOp]
+pub fn[T : Eq] diff(Array[T], Array[T]) -> Array[@algorithms.DiffOp]
 
-fn diff_line(Array[String], Array[String]) -> Array[@algorithms.DiffOp]
+pub fn diff_line(Array[String], Array[String]) -> Array[@algorithms.DiffOp]
 
-fn diff_str(String, String) -> Array[@algorithms.DiffOp]
+pub fn diff_str(String, String) -> Array[@algorithms.DiffOp]
 
-fn[T : Eq] diff_with_compact(Array[T], Array[T]) -> Array[@algorithms.DiffOp]
+pub fn[T : Eq] diff_with_compact(Array[T], Array[T]) -> Array[@algorithms.DiffOp]
 
-fn[T : Eq + Show] print_diff_line(Array[T], Array[T]) -> Unit
+pub fn[T : Eq + Show] print_diff_line(Array[T], Array[T]) -> Unit
 
-fn[T : Show] print_diff_ops(Array[T], Array[T], Array[@algorithms.DiffOp]) -> Unit
+pub fn[T : Show] print_diff_ops(Array[T], Array[T], Array[@algorithms.DiffOp]) -> Unit
 
 // Errors
 

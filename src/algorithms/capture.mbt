@@ -172,9 +172,7 @@ pub fn Capture::sort(self : Capture) -> Unit {
   }
 
   // Apply stable sorting with defined ordering rules
-  self
-  .0
-  .sort_by(fn(a : DiffOp, b : DiffOp) -> Int {
+  self.0.sort_by(fn(a : DiffOp, b : DiffOp) -> Int {
     let (a_old, a_new) = get_old_new_index(a).unwrap()
     let (b_old, b_new) = get_old_new_index(b).unwrap()
     if a_old == b_old {

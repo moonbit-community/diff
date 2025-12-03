@@ -2,29 +2,29 @@
 package "ruifeng/diff/algorithms"
 
 // Values
-fn[T : Eq] cleanup_diff_ops(Array[T], Array[T], Array[DiffOp]) -> Unit
+pub fn[T : Eq] cleanup_diff_ops(Array[T], Array[T], Array[DiffOp]) -> Unit
 
-fn[T : Eq] common_prefix_len(Array[T], Range, Array[T], Range) -> Int
+pub fn[T : Eq] common_prefix_len(Array[T], Range, Array[T], Range) -> Int
 
-fn[T : Eq] common_suffix_len(Array[T], Range, Array[T], Range) -> Int
+pub fn[T : Eq] common_suffix_len(Array[T], Range, Array[T], Range) -> Int
 
-fn[T : Eq] shift_diff_ops_down(Array[DiffOp], Array[T], Array[T], Int) -> Int
+pub fn[T : Eq] shift_diff_ops_down(Array[DiffOp], Array[T], Array[T], Int) -> Int
 
-fn[T : Eq] shift_diff_ops_up(Array[DiffOp], Array[T], Array[T], Int) -> Int
+pub fn[T : Eq] shift_diff_ops_up(Array[DiffOp], Array[T], Array[T], Int) -> Int
 
-fn[T : Eq + Hash] unique(Array[T], Range) -> Array[UniqueItem[T]]
+pub fn[T : Eq + Hash] unique(Array[T], Range) -> Array[UniqueItem[T]]
 
 // Errors
 
 // Types and methods
 type Capture
-fn Capture::into_ops(Self) -> Array[DiffOp]
-fn Capture::new() -> Self
-fn Capture::ops(Self) -> Array[DiffOp]
-fn Capture::sort(Self) -> Unit
-fn Capture::to_iter(Self) -> Iter[DiffOp]
-impl Default for Capture
-impl DiffHook for Capture
+pub fn Capture::into_ops(Self) -> Array[DiffOp]
+pub fn Capture::new() -> Self
+pub fn Capture::ops(Self) -> Array[DiffOp]
+pub fn Capture::sort(Self) -> Unit
+pub fn Capture::to_iter(Self) -> Iter[DiffOp]
+pub impl Default for Capture
+pub impl DiffHook for Capture
 
 pub(all) struct Compact[D, T] {
   d : D
@@ -32,11 +32,11 @@ pub(all) struct Compact[D, T] {
   old : Array[T]
   new : Array[T]
 }
-fn[D, T] Compact::into_inner(Self[D, T]) -> D
-fn[D, T] Compact::into_ops(Self[D, T]) -> Array[DiffOp]
-fn[D, T] Compact::new(D, Array[T], Array[T]) -> Self[D, T]
-fn[D, T] Compact::sort(Self[D, T]) -> Unit
-impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T]
+pub fn[D, T] Compact::into_inner(Self[D, T]) -> D
+pub fn[D, T] Compact::into_ops(Self[D, T]) -> Array[DiffOp]
+pub fn[D, T] Compact::new(D, Array[T], Array[T]) -> Self[D, T]
+pub fn[D, T] Compact::sort(Self[D, T]) -> Unit
+pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T]
 
 pub(all) enum DiffOp {
   Equal(mut old_index~ : Int, mut new_index~ : Int, mut len~ : Int)
@@ -44,29 +44,29 @@ pub(all) enum DiffOp {
   Insert(mut old_index~ : Int, mut new_index~ : Int, mut new_len~ : Int)
   Replace(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int, mut new_len~ : Int)
 }
-fn[D : DiffHook] DiffOp::apply_to_hook(Self, D) -> Result[Unit, Error]
-fn DiffOp::grow_left(Self, Int) -> Unit
-fn DiffOp::grow_right(Self, Int) -> Unit
-fn DiffOp::is_empty(Self) -> Bool
-fn DiffOp::new_range(Self) -> Range
-fn DiffOp::old_range(Self) -> Range
-fn DiffOp::shift_left(Self, Int) -> Unit
-fn DiffOp::shift_right(Self, Int) -> Unit
-fn DiffOp::shrink_left(Self, Int) -> Unit
-fn DiffOp::shrink_right(Self, Int) -> Unit
-impl Compare for DiffOp
-impl Eq for DiffOp
-impl Hash for DiffOp
-impl Show for DiffOp
+pub fn[D : DiffHook] DiffOp::apply_to_hook(Self, D) -> Result[Unit, Error]
+pub fn DiffOp::grow_left(Self, Int) -> Unit
+pub fn DiffOp::grow_right(Self, Int) -> Unit
+pub fn DiffOp::is_empty(Self) -> Bool
+pub fn DiffOp::new_range(Self) -> Range
+pub fn DiffOp::old_range(Self) -> Range
+pub fn DiffOp::shift_left(Self, Int) -> Unit
+pub fn DiffOp::shift_right(Self, Int) -> Unit
+pub fn DiffOp::shrink_left(Self, Int) -> Unit
+pub fn DiffOp::shrink_right(Self, Int) -> Unit
+pub impl Compare for DiffOp
+pub impl Eq for DiffOp
+pub impl Hash for DiffOp
+pub impl Show for DiffOp
 
 pub type Myers
-fn[T : Eq, D : DiffHook] Myers::diff(D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
+pub fn[T : Eq, D : DiffHook] Myers::diff(D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
 
 pub(all) struct NoFinishHook[D] {
   d : D
 }
-fn[D] NoFinishHook::into_inner(Self[D]) -> D
-fn[D] NoFinishHook::new(D) -> Self[D]
+pub fn[D] NoFinishHook::into_inner(Self[D]) -> D
+pub fn[D] NoFinishHook::new(D) -> Self[D]
 
 pub(all) struct Patience[T, D] {
   d : D
@@ -79,18 +79,18 @@ pub(all) struct Patience[T, D] {
   new_end : Int
   new_indexes : Array[UniqueItem[T]]
 }
-fn[T : Eq + Hash, D : DiffHook] Patience::diff(D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
+pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(D, Array[T], Range, Array[T], Range) -> Result[Unit, Error]
 
 pub(all) struct Range {
   mut start : Int
   mut end : Int
 }
-fn Range::contains(Self, Int) -> Bool
-fn Range::is_empty(Self) -> Bool
-fn Range::iter(Self) -> Iter[Int]
-fn Range::len(Self) -> Int
-fn Range::new(Int, Int) -> Self
-impl Show for Range
+pub fn Range::contains(Self, Int) -> Bool
+pub fn Range::is_empty(Self) -> Bool
+pub fn Range::iter(Self) -> Iter[Int]
+pub fn Range::len(Self) -> Int
+pub fn Range::new(Int, Int) -> Self
+pub impl Show for Range
 
 pub(all) struct Replace[D] {
   d : D
@@ -98,19 +98,19 @@ pub(all) struct Replace[D] {
   mut ins : (Int, Int, Int)?
   mut eq : (Int, Int, Int)?
 }
-fn[D : DiffHook] Replace::flush_del_ins(Self[D]) -> Result[Unit, Error]
-fn[D : DiffHook] Replace::flush_eq(Self[D]) -> Result[Unit, Error]
-fn[D] Replace::into_inner(Self[D]) -> D
-fn[D] Replace::new(D) -> Self[D]
-impl[D : DiffHook] DiffHook for Replace[D]
+pub fn[D : DiffHook] Replace::flush_del_ins(Self[D]) -> Result[Unit, Error]
+pub fn[D : DiffHook] Replace::flush_eq(Self[D]) -> Result[Unit, Error]
+pub fn[D] Replace::into_inner(Self[D]) -> D
+pub fn[D] Replace::new(D) -> Self[D]
+pub impl[D : DiffHook] DiffHook for Replace[D]
 
 type UniqueItem[T]
 
 type V
-fn V::len(Self) -> Int
-fn V::new(Int) -> Self
-fn V::op_get(Self, Int) -> Int
-fn V::op_set(Self, Int, Int) -> Unit
+pub fn V::len(Self) -> Int
+pub fn V::new(Int) -> Self
+pub fn V::op_get(Self, Int) -> Int
+pub fn V::op_set(Self, Int, Int) -> Unit
 
 // Type aliases
 
