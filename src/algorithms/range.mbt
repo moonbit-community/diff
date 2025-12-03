@@ -11,7 +11,8 @@
 /// - Provides utility methods for common range operations
 /// - Integrates seamlessly with array indexing
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// RANGE STRUCTURE
 /// ================================================================================
 ///
@@ -28,7 +29,8 @@ pub(all) struct Range {
   mut end : Int
 } derive(Show)
 
-///| Creates a new Range with specified start and end indices
+///|
+/// Creates a new Range with specified start and end indices
 ///
 /// @param start Inclusive start index
 /// @param end Exclusive end index
@@ -41,7 +43,8 @@ pub fn Range::new(start : Int, end : Int) -> Range {
 /// RANGE QUERY ALGORITHMS
 /// ================================================================================
 
-///| Checks if the range contains no elements
+///|
+/// Checks if the range contains no elements
 ///
 /// ALGORITHM: A range is empty when start >= end
 /// This is the mathematical property of half-open intervals
@@ -51,7 +54,8 @@ pub fn Range::is_empty(self : Range) -> Bool {
   self.start >= self.end
 }
 
-///| Calculates the number of elements in the range
+///|
+/// Calculates the number of elements in the range
 ///
 /// ALGORITHM: length = max(0, end - start)
 /// The max ensures we never return negative length for invalid ranges
@@ -61,7 +65,8 @@ pub fn Range::len(self : Range) -> Int {
   @cmp.maximum(self.end - self.start, 0)
 }
 
-///| Checks if a specific index falls within the range
+///|
+/// Checks if a specific index falls within the range
 ///
 /// ALGORITHM: index is in range when start <= index < end
 /// This follows the half-open interval definition
@@ -72,7 +77,8 @@ pub fn Range::contains(self : Range, i : Int) -> Bool {
   i >= self.start && i < self.end
 }
 
-///| ================================================================================
+///|
+/// ================================================================================
 /// RANGE ITERATION ALGORITHM
 /// ================================================================================
 ///
