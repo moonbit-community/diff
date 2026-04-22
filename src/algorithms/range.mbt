@@ -27,7 +27,12 @@ pub(all) struct Range {
   mut start : Int
   /// Exclusive end index of the range
   mut end : Int
-} derive(Show)
+}
+
+///|
+pub impl Show for Range with output(self, logger) {
+  logger.write_string("{start: \{self.start}, end: \{self.end}}")
+}
 
 ///|
 /// Creates a new Range with specified start and end indices

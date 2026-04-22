@@ -14,7 +14,29 @@ pub(all) enum DiffOp {
     mut new_index~ : Int,
     mut new_len~ : Int
   )
-} derive(Eq, Show, Hash, Compare)
+} derive(Eq, Hash, Compare)
+
+///|
+pub impl Show for DiffOp with output(self, logger) {
+  match self {
+    Equal(old_index~, new_index~, len~) =>
+      logger.write_string(
+        "Equal(old_index=\{old_index}, new_index=\{new_index}, len=\{len})",
+      )
+    Delete(old_index~, old_len~, new_index~) =>
+      logger.write_string(
+        "Delete(old_index=\{old_index}, old_len=\{old_len}, new_index=\{new_index})",
+      )
+    Insert(old_index~, new_index~, new_len~) =>
+      logger.write_string(
+        "Insert(old_index=\{old_index}, new_index=\{new_index}, new_len=\{new_len})",
+      )
+    Replace(old_index~, old_len~, new_index~, new_len~) =>
+      logger.write_string(
+        "Replace(old_index=\{old_index}, old_len=\{old_len}, new_index=\{new_index}, new_len=\{new_len})",
+      )
+  }
+}
 
 ///|
 /// Applies the given `DiffOp` to a `DiffHook`.
