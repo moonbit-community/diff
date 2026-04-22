@@ -135,22 +135,22 @@ fn DiffOp::adjust(
   }
 
   match self {
-    DiffOp::Equal(old_index~, new_index~, len~) as op => {
+    Equal(old_index~, new_index~, len~) as op => {
       op.old_index = modify(old_index, adjust_offset)
       op.new_index = modify(new_index, adjust_offset)
       op.len = modify(len, adjust_len)
     }
-    DiffOp::Delete(old_index~, old_len~, new_index~) as op => {
+    Delete(old_index~, old_len~, new_index~) as op => {
       op.old_index = modify(old_index, adjust_offset)
       op.old_len = modify(old_len, adjust_len)
       op.new_index = modify(new_index, adjust_offset)
     }
-    DiffOp::Insert(old_index~, new_index~, new_len~) as op => {
+    Insert(old_index~, new_index~, new_len~) as op => {
       op.old_index = modify(old_index, adjust_offset)
       op.new_index = modify(new_index, adjust_offset)
       op.new_len = modify(new_len, adjust_len)
     }
-    DiffOp::Replace(old_index~, old_len~, new_index~, new_len~) as op => {
+    Replace(old_index~, old_len~, new_index~, new_len~) as op => {
       op.old_index = modify(old_index, adjust_offset)
       op.old_len = modify(old_len, adjust_len)
       op.new_index = modify(new_index, adjust_offset)
