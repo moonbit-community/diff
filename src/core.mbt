@@ -1,38 +1,30 @@
-///|
-/// Type aliases for core diff components
-using @algorithms {
-  type Range,
-  type DiffOp,
-  type Replace,
-  type Capture,
-  type Compact,
-}
-
 ///| Computes the difference between two arrays of `T`.
 
 ///|
 /// Main entry point for standard diffing logic using Myers algorithm with `Replace` hook.
-pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[DiffOp] {
-  let d = Replace::new(Capture::new())
+pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[@algorithms.DiffOp] {
+  let d = @algorithms.Replace::new(@algorithms.Capture::new())
   let _ = @algorithms.Myers::diff(
     d,
     old,
-    Range::new(0, old.length()),
+    @algorithms.Range::new(0, old.length()),
     new,
-    Range::new(0, new.length()),
+    @algorithms.Range::new(0, new.length()),
   )
   d.into_inner().into_ops()
 }
 
 ///|
 /// Computes the difference between two strings, character by character.
-pub fn diff_str(old : String, new : String) -> Array[DiffOp] {
+pub fn diff_str(old : String, new : String) -> Array[@algorithms.DiffOp] {
   diff(old.to_array(), new.to_array())
 }
 
 ///|
 /// Computes the difference between two arrays of strings, line by line.
-pub fn diff_line(old : Array[String], new : Array[String]) -> Array[DiffOp] {
+pub fn diff_line(old : Array[String], new : Array[String]) -> Array[
+  @algorithms.DiffOp,
+] {
   diff(old, new)
 }
 
@@ -48,7 +40,7 @@ pub fn[T : Eq + Show] print_diff_line(old : Array[T], new : Array[T]) -> Unit {
 pub fn[T : Show] print_diff_ops(
   old : Array[T],
   new : Array[T],
-  ops : Array[DiffOp],
+  ops : Array[@algorithms.DiffOp],
 ) -> Unit {
   for op in ops {
     match op {
@@ -96,14 +88,18 @@ pub fn[T : Show] print_diff_ops(
 pub fn[T : Eq] diff_with_compact(
   old : Array[T],
   new : Array[T],
-) -> Array[DiffOp] {
-  let d = Compact::new(Replace::new(Capture::new()), old, new)
+) -> Array[@algorithms.DiffOp] {
+  let d = @algorithms.Compact::new(
+    @algorithms.Replace::new(@algorithms.Capture::new()),
+    old,
+    new,
+  )
   let _ = @algorithms.Myers::diff(
     d,
     old,
-    Range::new(0, old.length()),
+    @algorithms.Range::new(0, old.length()),
     new,
-    Range::new(0, new.length()),
+    @algorithms.Range::new(0, new.length()),
   )
   d.into_ops()
 }
