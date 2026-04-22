@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "ruifeng/diff"
 
-import(
-  "ruifeng/diff/algorithms"
-)
+import {
+  "ruifeng/diff/algorithms",
+}
 
 // Values
 pub fn[T : Eq] diff(Array[T], Array[T]) -> Array[@algorithms.DiffOp]

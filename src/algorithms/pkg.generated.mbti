@@ -17,13 +17,12 @@ pub fn[T : Eq + Hash] unique(Array[T], Range) -> Array[UniqueItem[T]]
 // Errors
 
 // Types and methods
-type Capture
+type Capture derive(Default)
 pub fn Capture::into_ops(Self) -> Array[DiffOp]
 pub fn Capture::new() -> Self
 pub fn Capture::ops(Self) -> Array[DiffOp]
 pub fn Capture::sort(Self) -> Unit
 pub fn Capture::to_iter(Self) -> Iter[DiffOp]
-pub impl Default for Capture
 pub impl DiffHook for Capture
 
 pub(all) struct Compact[D, T] {
@@ -43,7 +42,7 @@ pub(all) enum DiffOp {
   Delete(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int)
   Insert(mut old_index~ : Int, mut new_index~ : Int, mut new_len~ : Int)
   Replace(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int, mut new_len~ : Int)
-}
+} derive(Compare, Eq, Hash)
 pub fn[D : DiffHook] DiffOp::apply_to_hook(Self, D) -> Result[Unit, Error]
 pub fn DiffOp::grow_left(Self, Int) -> Unit
 pub fn DiffOp::grow_right(Self, Int) -> Unit
@@ -54,9 +53,6 @@ pub fn DiffOp::shift_left(Self, Int) -> Unit
 pub fn DiffOp::shift_right(Self, Int) -> Unit
 pub fn DiffOp::shrink_left(Self, Int) -> Unit
 pub fn DiffOp::shrink_right(Self, Int) -> Unit
-pub impl Compare for DiffOp
-pub impl Eq for DiffOp
-pub impl Hash for DiffOp
 pub impl Show for DiffOp
 
 pub type Myers
