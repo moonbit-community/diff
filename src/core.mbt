@@ -2,7 +2,10 @@
 
 ///|
 /// Main entry point for standard diffing logic using Myers algorithm with `Replace` hook.
-pub fn[T : Eq] diff(old : Array[T], new : Array[T]) -> Array[@algorithms.DiffOp] {
+pub fn[T : Eq] diff(
+  old : Array[T],
+  new : Array[T],
+) -> Array[@algorithms.DiffOp] {
   let d = @algorithms.Replace::new(@algorithms.Capture::new())
   let _ = @algorithms.Myers::diff(
     d,
@@ -22,9 +25,10 @@ pub fn diff_str(old : String, new : String) -> Array[@algorithms.DiffOp] {
 
 ///|
 /// Computes the difference between two arrays of strings, line by line.
-pub fn diff_line(old : Array[String], new : Array[String]) -> Array[
-  @algorithms.DiffOp,
-] {
+pub fn diff_line(
+  old : Array[String],
+  new : Array[String],
+) -> Array[@algorithms.DiffOp] {
   diff(old, new)
 }
 

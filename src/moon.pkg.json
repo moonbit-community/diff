@@ -1,9 +1,0 @@
-{
-  "import": [
-    {
-      "path": "ruifeng/diff/algorithms",
-      "alias": "algorithms"
-    }
-  ],
-  "warn-list": "+a"
-}

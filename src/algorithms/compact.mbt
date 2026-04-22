@@ -123,7 +123,6 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> R
   // Step 3: Apply compacted operations to inner hook
   for op in self.ops {
     let _ = op.apply_to_hook(self.d)
-
   }
   self.d.finish()
 }
@@ -201,8 +200,7 @@ pub fn[T : Eq] shift_diff_ops_up(
     let this_op = ops[pointer]
     match (this_op, prev_op) {
       // Rule 1: Swap insert/delete to group similar operations
-      (Insert(..), Delete(..))
-      | (Delete(..), Insert(..)) => {
+      (Insert(..), Delete(..)) | (Delete(..), Insert(..)) => {
         ops.swap(pointer - 1, pointer)
         pointer -= 1
       }
@@ -238,10 +236,7 @@ pub fn[T : Eq] shift_diff_ops_up(
               let old_index = this_op.old_range().end - suffix_len
               let new_index = this_op.new_range().end - suffix_len
               let len = suffix_len
-              ops.insert(
-                pointer + 1,
-                Equal(old_index~, new_index~, len~),
-              )
+              ops.insert(pointer + 1, Equal(old_index~, new_index~, len~))
             }
           }
 
@@ -279,10 +274,7 @@ pub fn[T : Eq] shift_diff_ops_up(
               let old_index = this_op.old_range().end - suffix_len
               let new_index = this_op.new_range().end - suffix_len
               let len = suffix_len
-              ops.insert(
-                pointer + 1,
-                Equal(old_index~, new_index~, len~),
-              )
+              ops.insert(pointer + 1, Equal(old_index~, new_index~, len~))
             }
           }
 
@@ -325,8 +317,7 @@ pub fn[T : Eq] shift_diff_ops_down(
     let this_op = ops[pointer]
     match (this_op, next_op) {
       // Rule 1: Swap insert/delete operations
-      (Insert(..), Delete(..))
-      | (Delete(..), Insert(..)) => {
+      (Insert(..), Delete(..)) | (Delete(..), Insert(..)) => {
         ops.swap(pointer, pointer + 1)
         pointer += 1
       }
@@ -335,14 +326,12 @@ pub fn[T : Eq] shift_diff_ops_down(
       (Insert(..), Insert(..)) => {
         this_op.grow_right(next_op.new_range().len())
         let _ = ops.remove(pointer + 1)
-
       }
 
       // Rule 3: Merge adjacent delete operations
       (Delete(..), Delete(..)) => {
         this_op.grow_right(next_op.old_range().len())
         let _ = ops.remove(pointer + 1)
-
       }
 
       // Rule 4: Align insert with common prefix
@@ -374,11 +363,9 @@ pub fn[T : Eq] shift_diff_ops_down(
           // Remove empty operations
           if next_op.is_empty() {
             let _ = ops.remove(pointer + 1)
-
           }
         } else if ops[pointer + 1].is_empty() {
           let _ = ops.remove(pointer + 1)
-
         } else {
           break
         }
@@ -413,11 +400,9 @@ pub fn[T : Eq] shift_diff_ops_down(
           // Remove empty operations
           if next_op.is_empty() {
             let _ = ops.remove(pointer + 1)
-
           }
         } else if ops[pointer + 1].is_empty() {
           let _ = ops.remove(pointer + 1)
-
         } else {
           break
         }
@@ -438,12 +423,9 @@ pub fn[T : Eq] shift_diff_ops_down(
 pub fn[D, T] Compact::sort(self : Compact[D, T]) -> Unit {
   fn get_old_new_index(op : DiffOp) -> (Int, Int)? {
     match op {
-      Equal(old_index~, new_index~, len=_) =>
-        Some((old_index, new_index))
-      Delete(old_index~, old_len=_, new_index~) =>
-        Some((old_index, new_index))
-      Insert(old_index~, new_index~, new_len=_) =>
-        Some((old_index, new_index))
+      Equal(old_index~, new_index~, len=_) => Some((old_index, new_index))
+      Delete(old_index~, old_len=_, new_index~) => Some((old_index, new_index))
+      Insert(old_index~, new_index~, new_len=_) => Some((old_index, new_index))
       Replace(old_index~, old_len=_, new_index~, new_len=_) =>
         Some((old_index, new_index))
     }
