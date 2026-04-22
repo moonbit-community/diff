@@ -1,0 +1,6 @@
+import {
+  "moonbitlang/core/cmp" @cmp,
+  "moonbitlang/core/hashmap" @hashmap,
+}
+
+warnings = "+a"

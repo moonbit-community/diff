@@ -160,12 +160,9 @@ pub fn Capture::sort(self : Capture) -> Unit {
   /// Helper function to extract sorting keys from operations
   fn get_old_new_index(op : DiffOp) -> (Int, Int)? {
     match op {
-      Equal(old_index~, new_index~, len=_) =>
-        Some((old_index, new_index))
-      Delete(old_index~, old_len=_, new_index~) =>
-        Some((old_index, new_index))
-      Insert(old_index~, new_index~, new_len=_) =>
-        Some((old_index, new_index))
+      Equal(old_index~, new_index~, len=_) => Some((old_index, new_index))
+      Delete(old_index~, old_len=_, new_index~) => Some((old_index, new_index))
+      Insert(old_index~, new_index~, new_len=_) => Some((old_index, new_index))
       Replace(old_index~, old_len=_, new_index~, new_len=_) =>
         Some((old_index, new_index))
     }

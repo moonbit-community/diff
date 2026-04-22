@@ -246,7 +246,6 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   let common_prefix_len = common_prefix_len(old, old_range, new, new_range)
   if common_prefix_len > 0 {
     let _ = d.equal(old_range.start, new_range.start, common_prefix_len)
-
   }
   old_range.start += common_prefix_len
   new_range.start += common_prefix_len
@@ -266,11 +265,9 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   } else if new_range.is_empty() {
     // New sequence empty - pure deletion
     let _ = d.delete(old_range.start, old_range.len(), new_range.start)
-
   } else if old_range.is_empty() {
     // Old sequence empty - pure insertion
     let _ = d.insert(old_range.start, new_range.start, new_range.len())
-
   } else {
     // Step 4: Recursive case - find middle snake and divide
     match find_middle_snake(old, old_range, new, new_range, vf, vb) {
@@ -282,13 +279,11 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
         // Recursively solve subproblems
         let _ = divide_and_conquer(d, old, old_a, new, new_a, vf, vb)
         let _ = divide_and_conquer(d, old, old_b, new, new_b, vf, vb)
-
       }
       None => {
         // Fallback: treat as replace operation
         let _ = d.delete(old_range.start, old_range.len(), new_range.start)
         let _ = d.insert(old_range.start, new_range.start, new_range.len())
-
       }
     }
   }
@@ -296,7 +291,6 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   // Step 5: Report common suffix that was stripped earlier
   if common_suffix_len > 0 {
     let _ = d.equal(common_suffix.0, common_suffix.1, common_suffix_len)
-
   }
   Ok(())
 }

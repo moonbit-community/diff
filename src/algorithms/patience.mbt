@@ -143,7 +143,6 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
     // Step 2: Report any common prefix found
     if self.old_current > a0 {
       let _ = self.d.equal(a0, b0, self.old_current - a0)
-
     }
 
     // Step 3: Recursively diff the region between anchors
