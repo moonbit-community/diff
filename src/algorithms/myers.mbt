@@ -208,7 +208,7 @@ fn[T : Eq] find_middle_snake(
       vb[k] = x
 
       // Check if paths have met
-      if not(odd) && (k - delta).abs() <= d {
+      if !odd && (k - delta).abs() <= d {
         if vb[k] + vf[-(k - delta)] >= n {
           return Some((n - x + old_range.start, m - y + new_range.start))
         }
