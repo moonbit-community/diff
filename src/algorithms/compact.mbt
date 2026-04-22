@@ -75,7 +75,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
   new_index,
   len,
 ) -> Result[Unit, Error] {
-  self.ops.push(DiffOp::Equal(old_index~, new_index~, len~))
+  self.ops.push(Equal(old_index~, new_index~, len~))
   Ok(())
 }
 
@@ -87,7 +87,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
   old_len,
   new_index,
 ) -> Result[Unit, Error] {
-  self.ops.push(DiffOp::Delete(old_index~, old_len~, new_index~))
+  self.ops.push(Delete(old_index~, old_len~, new_index~))
   Ok(())
 }
 
@@ -99,7 +99,7 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
   new_index,
   new_len,
 ) -> Result[Unit, Error] {
-  self.ops.push(DiffOp::Insert(old_index~, new_index~, new_len~))
+  self.ops.push(Insert(old_index~, new_index~, new_len~))
   Ok(())
 }
 
@@ -149,7 +149,7 @@ pub fn[T : Eq] cleanup_diff_ops(
   while pointer < ops.length() {
     let op = ops.get(pointer).unwrap()
     match op {
-      DiffOp::Delete(..) => {
+      Delete(..) => {
         // Shift delete operations up and down to enable merging
         pointer = shift_diff_ops_up(ops, old, new, pointer)
         pointer = shift_diff_ops_down(ops, old, new, pointer)
@@ -164,7 +164,7 @@ pub fn[T : Eq] cleanup_diff_ops(
   while pointer < ops.length() {
     let op = ops.get(pointer).unwrap()
     match op {
-      DiffOp::Insert(..) => {
+      Insert(..) => {
         // Shift insert operations up and down to enable merging
         pointer = shift_diff_ops_up(ops, old, new, pointer)
         pointer = shift_diff_ops_down(ops, old, new, pointer)
@@ -201,28 +201,28 @@ pub fn[T : Eq] shift_diff_ops_up(
     let this_op = ops[pointer]
     match (this_op, prev_op) {
       // Rule 1: Swap insert/delete to group similar operations
-      (DiffOp::Insert(..), DiffOp::Delete(..))
-      | (DiffOp::Delete(..), DiffOp::Insert(..)) => {
+      (Insert(..), Delete(..))
+      | (Delete(..), Insert(..)) => {
         ops.swap(pointer - 1, pointer)
         pointer -= 1
       }
 
       // Rule 2: Merge adjacent insert operations
-      (DiffOp::Insert(..), DiffOp::Insert(..)) => {
+      (Insert(..), Insert(..)) => {
         ops[pointer - 1].grow_right(this_op.new_range().len())
         let _ = ops.remove(pointer)
         pointer -= 1
       }
 
       // Rule 3: Merge adjacent delete operations
-      (DiffOp::Delete(..), DiffOp::Delete(..)) => {
+      (Delete(..), Delete(..)) => {
         ops[pointer - 1].grow_right(this_op.old_range().len())
         let _ = ops.remove(pointer)
         pointer -= 1
       }
 
       // Rule 4: Align insert with common suffix
-      (DiffOp::Insert(..), DiffOp::Equal(..)) => {
+      (Insert(..), Equal(..)) => {
         let suffix_len = common_suffix_len(
           new,
           prev_op.new_range(),
@@ -232,7 +232,7 @@ pub fn[T : Eq] shift_diff_ops_up(
         if suffix_len > 0 {
           // Found common suffix - can shift operation
           match ops.get(pointer + 1) {
-            Some(DiffOp::Equal(..) as next_op) => next_op.grow_left(suffix_len)
+            Some(Equal(..) as next_op) => next_op.grow_left(suffix_len)
             _ => {
               // Create new Equal operation for common suffix
               let old_index = this_op.old_range().end - suffix_len
@@ -240,7 +240,7 @@ pub fn[T : Eq] shift_diff_ops_up(
               let len = suffix_len
               ops.insert(
                 pointer + 1,
-                DiffOp::Equal(old_index~, new_index~, len~),
+                Equal(old_index~, new_index~, len~),
               )
             }
           }
@@ -263,7 +263,7 @@ pub fn[T : Eq] shift_diff_ops_up(
       }
 
       // Rule 5: Align delete with common suffix
-      (DiffOp::Delete(..), DiffOp::Equal(..)) => {
+      (Delete(..), Equal(..)) => {
         let suffix_len = common_suffix_len(
           old,
           prev_op.old_range(),
@@ -273,7 +273,7 @@ pub fn[T : Eq] shift_diff_ops_up(
         if suffix_len > 0 {
           // Found common suffix - can shift operation
           match ops.get(pointer + 1) {
-            Some(DiffOp::Equal(..) as next_op) => next_op.grow_left(suffix_len)
+            Some(Equal(..) as next_op) => next_op.grow_left(suffix_len)
             _ => {
               // Create new Equal operation for common suffix
               let old_index = this_op.old_range().end - suffix_len
@@ -281,7 +281,7 @@ pub fn[T : Eq] shift_diff_ops_up(
               let len = suffix_len
               ops.insert(
                 pointer + 1,
-                DiffOp::Equal(old_index~, new_index~, len~),
+                Equal(old_index~, new_index~, len~),
               )
             }
           }
@@ -325,28 +325,28 @@ pub fn[T : Eq] shift_diff_ops_down(
     let this_op = ops[pointer]
     match (this_op, next_op) {
       // Rule 1: Swap insert/delete operations
-      (DiffOp::Insert(..), DiffOp::Delete(..))
-      | (DiffOp::Delete(..), DiffOp::Insert(..)) => {
+      (Insert(..), Delete(..))
+      | (Delete(..), Insert(..)) => {
         ops.swap(pointer, pointer + 1)
         pointer += 1
       }
 
       // Rule 2: Merge adjacent insert operations
-      (DiffOp::Insert(..), DiffOp::Insert(..)) => {
+      (Insert(..), Insert(..)) => {
         this_op.grow_right(next_op.new_range().len())
         let _ = ops.remove(pointer + 1)
 
       }
 
       // Rule 3: Merge adjacent delete operations
-      (DiffOp::Delete(..), DiffOp::Delete(..)) => {
+      (Delete(..), Delete(..)) => {
         this_op.grow_right(next_op.old_range().len())
         let _ = ops.remove(pointer + 1)
 
       }
 
       // Rule 4: Align insert with common prefix
-      (DiffOp::Insert(..), DiffOp::Equal(..)) => {
+      (Insert(..), Equal(..)) => {
         let prefix_len = common_prefix_len(
           new,
           next_op.new_range(),
@@ -356,13 +356,13 @@ pub fn[T : Eq] shift_diff_ops_down(
         if prefix_len > 0 {
           // Found common prefix - can shift operation
           match ops.get(pointer - 1) {
-            Some(DiffOp::Equal(..) as prev_op) => prev_op.grow_right(prefix_len)
+            Some(Equal(..) as prev_op) => prev_op.grow_right(prefix_len)
             _ => {
               // Create new Equal operation for common prefix
               let old_index = this_op.old_range().start
               let new_index = next_op.new_range().start
               let len = prefix_len
-              ops.insert(pointer, DiffOp::Equal(old_index~, new_index~, len~))
+              ops.insert(pointer, Equal(old_index~, new_index~, len~))
               pointer += 1
             }
           }
@@ -385,7 +385,7 @@ pub fn[T : Eq] shift_diff_ops_down(
       }
 
       // Rule 5: Align delete with common prefix
-      (DiffOp::Delete(..), DiffOp::Equal(..)) => {
+      (Delete(..), Equal(..)) => {
         let prefix_len = common_prefix_len(
           old,
           next_op.old_range(),
@@ -395,13 +395,13 @@ pub fn[T : Eq] shift_diff_ops_down(
         if prefix_len > 0 {
           // Found common prefix - can shift operation
           match ops.get(pointer - 1) {
-            Some(DiffOp::Equal(..) as prev_op) => prev_op.grow_right(prefix_len)
+            Some(Equal(..) as prev_op) => prev_op.grow_right(prefix_len)
             _ => {
               // Create new Equal operation for common prefix
               let old_index = this_op.old_range().start
               let new_index = this_op.new_range().start
               let len = prefix_len
-              ops.insert(pointer, DiffOp::Equal(old_index~, new_index~, len~))
+              ops.insert(pointer, Equal(old_index~, new_index~, len~))
               pointer += 1
             }
           }
@@ -438,13 +438,13 @@ pub fn[T : Eq] shift_diff_ops_down(
 pub fn[D, T] Compact::sort(self : Compact[D, T]) -> Unit {
   fn get_old_new_index(op : DiffOp) -> (Int, Int)? {
     match op {
-      DiffOp::Equal(old_index~, new_index~, len=_) =>
+      Equal(old_index~, new_index~, len=_) =>
         Some((old_index, new_index))
-      DiffOp::Delete(old_index~, old_len=_, new_index~) =>
+      Delete(old_index~, old_len=_, new_index~) =>
         Some((old_index, new_index))
-      DiffOp::Insert(old_index~, new_index~, new_len=_) =>
+      Insert(old_index~, new_index~, new_len=_) =>
         Some((old_index, new_index))
-      DiffOp::Replace(old_index~, old_len=_, new_index~, new_len=_) =>
+      Replace(old_index~, old_len=_, new_index~, new_len=_) =>
         Some((old_index, new_index))
     }
   }

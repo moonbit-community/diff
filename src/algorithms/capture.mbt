@@ -79,7 +79,7 @@ pub impl DiffHook for Capture with equal(
   new_index : Int,
   len : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Equal(old_index~, new_index~, len~))
+  self.0.push(Equal(old_index~, new_index~, len~))
   Ok(())
 }
 
@@ -95,7 +95,7 @@ pub impl DiffHook for Capture with delete(
   old_len : Int,
   new_index : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Delete(old_index~, old_len~, new_index~))
+  self.0.push(Delete(old_index~, old_len~, new_index~))
   Ok(())
 }
 
@@ -111,7 +111,7 @@ pub impl DiffHook for Capture with insert(
   new_index : Int,
   new_len : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Insert(old_index~, new_index~, new_len~))
+  self.0.push(Insert(old_index~, new_index~, new_len~))
   Ok(())
 }
 
@@ -129,7 +129,7 @@ pub impl DiffHook for Capture with replace(
   new_index : Int,
   new_len : Int,
 ) -> Result[Unit, Error] {
-  self.0.push(DiffOp::Replace(old_index~, old_len~, new_index~, new_len~))
+  self.0.push(Replace(old_index~, old_len~, new_index~, new_len~))
   Ok(())
 }
 
@@ -160,13 +160,13 @@ pub fn Capture::sort(self : Capture) -> Unit {
   /// Helper function to extract sorting keys from operations
   fn get_old_new_index(op : DiffOp) -> (Int, Int)? {
     match op {
-      DiffOp::Equal(old_index~, new_index~, len=_) =>
+      Equal(old_index~, new_index~, len=_) =>
         Some((old_index, new_index))
-      DiffOp::Delete(old_index~, old_len=_, new_index~) =>
+      Delete(old_index~, old_len=_, new_index~) =>
         Some((old_index, new_index))
-      DiffOp::Insert(old_index~, new_index~, new_len=_) =>
+      Insert(old_index~, new_index~, new_len=_) =>
         Some((old_index, new_index))
-      DiffOp::Replace(old_index~, old_len=_, new_index~, new_len=_) =>
+      Replace(old_index~, old_len=_, new_index~, new_len=_) =>
         Some((old_index, new_index))
     }
   }

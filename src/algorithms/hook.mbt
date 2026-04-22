@@ -89,7 +89,7 @@ pub(all) struct NoFinishHook[D] {
 ///|
 /// Creates a new `NoFinishHook`.
 pub fn[D] NoFinishHook::new(d : D) -> NoFinishHook[D] {
-  NoFinishHook::{ d, }
+  { d, }
 }
 
 ///|

@@ -52,28 +52,28 @@ pub fn[T : Show] print_diff_ops(
 ) -> Unit {
   for op in ops {
     match op {
-      DiffOp::Equal(old_index~, new_index=_, len~) => {
+      Equal(old_index~, new_index=_, len~) => {
         let mut i = 0
         while i < len {
           println("   \{old[old_index + i]}")
           i += 1
         }
       }
-      DiffOp::Delete(old_index~, old_len~, new_index=_) => {
+      Delete(old_index~, old_len~, new_index=_) => {
         let mut i = 0
         while i < old_len {
           println(" - \{old[old_index + i]}")
           i += 1
         }
       }
-      DiffOp::Insert(old_index=_, new_index~, new_len~) => {
+      Insert(old_index=_, new_index~, new_len~) => {
         let mut i = 0
         while i < new_len {
           println(" + \{new[new_index + i]}")
           i += 1
         }
       }
-      DiffOp::Replace(old_index~, old_len~, new_index~, new_len~) => {
+      Replace(old_index~, old_len~, new_index~, new_len~) => {
         let mut i = 0
         while i < old_len {
           println(" - \{old[old_index + i]}")
