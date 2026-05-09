@@ -74,7 +74,7 @@ pub fn[T : Eq + Hash] unique(
   range : Range,
 ) -> Array[UniqueItem[T]] {
   // Step 1: Build frequency map
-  let map : @hashmap.HashMap[T, Int?] = @hashmap.HashMap([])
+  let map : @hashmap.HashMap[T, Int?] = HashMap([])
   for i in range {
     match map.get(array[i]) {
       None => map[array[i]] = Some(i) // First occurrence
