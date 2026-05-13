@@ -14,7 +14,7 @@ pub(all) enum DiffOp {
     mut new_index~ : Int,
     mut new_len~ : Int
   )
-} derive(Eq, Hash, Compare)
+} derive(Eq, Hash, Compare, Debug)
 
 ///|
 pub impl Show for DiffOp with output(self, logger) {

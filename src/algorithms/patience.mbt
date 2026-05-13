@@ -195,9 +195,19 @@ test "test_patience" {
     Range::new(0, b.length()),
   )
   let ops = d.into_inner().ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Replace(old_index=0, old_len=1, new_index=0, new_len=1), Equal(old_index=1, new_index=1, len=3), Replace(old_index=4, old_len=1, new_index=4, new_len=2), Equal(old_index=5, new_index=6, len=2), Replace(old_index=7, old_len=2, new_index=8, new_len=1), Equal(old_index=9, new_index=9, len=1), Replace(old_index=10, old_len=1, new_index=10, new_len=1)]",
+    content=(
+      #|[
+      #|  Replace(old_index=0, old_len=1, new_index=0, new_len=1),
+      #|  Equal(old_index=1, new_index=1, len=3),
+      #|  Replace(old_index=4, old_len=1, new_index=4, new_len=2),
+      #|  Equal(old_index=5, new_index=6, len=2),
+      #|  Replace(old_index=7, old_len=2, new_index=8, new_len=1),
+      #|  Equal(old_index=9, new_index=9, len=1),
+      #|  Replace(old_index=10, old_len=1, new_index=10, new_len=1),
+      #|]
+    ),
   )
 }
 
@@ -216,8 +226,13 @@ test "test_patience_2" {
     Range::new(0, b.length()),
   )
   let ops = d.into_inner().ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=3)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=3),
+      #|  Delete(old_index=3, old_len=1, new_index=3),
+      #|]
+    ),
   )
 }

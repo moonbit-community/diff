@@ -55,6 +55,7 @@ fn DiffOp::shift_right(Self, Int) -> Unit
 fn DiffOp::shrink_left(Self, Int) -> Unit
 fn DiffOp::shrink_right(Self, Int) -> Unit
 impl Compare for DiffOp
+impl Debug for DiffOp
 impl Eq for DiffOp
 impl Hash for DiffOp
 impl Show for DiffOp
@@ -122,4 +123,3 @@ pub(open) trait DiffHook {
   replace(Self, Int, Int, Int, Int) -> Result[Unit, Error] = _
   finish(Self) -> Result[Unit, Error] = _
 }
-
