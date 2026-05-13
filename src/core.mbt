@@ -114,9 +114,16 @@ test "test_diff" {
   let a = [1, 2, 3, 4, 5, 8, 9]
   let b = [1, 2, 0, 4, 5, 6, 7]
   let diffs = diff(a, b)
-  inspect(
+  debug_inspect(
     diffs,
-    content="[Equal(old_index=0, new_index=0, len=2), Replace(old_index=2, old_len=1, new_index=2, new_len=1), Equal(old_index=3, new_index=3, len=2), Replace(old_index=5, old_len=2, new_index=5, new_len=2)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=2),
+      #|  Replace(old_index=2, old_len=1, new_index=2, new_len=1),
+      #|  Equal(old_index=3, new_index=3, len=2),
+      #|  Replace(old_index=5, old_len=2, new_index=5, new_len=2),
+      #|]
+    ),
   )
 }
 
@@ -134,8 +141,15 @@ test "test_diff_with_compact" {
   let old = "a b c d".to_array()
   let new = "a b d c".to_array()
   let compact_diffs = diff_with_compact(old, new)
-  inspect(
+  debug_inspect(
     compact_diffs,
-    content="[Equal(old_index=0, new_index=0, len=4), Insert(old_index=4, new_index=4, new_len=2), Equal(old_index=4, new_index=6, len=1), Delete(old_index=5, old_len=2, new_index=7)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=4),
+      #|  Insert(old_index=4, new_index=4, new_len=2),
+      #|  Equal(old_index=4, new_index=6, len=1),
+      #|  Delete(old_index=5, old_len=2, new_index=7),
+      #|]
+    ),
   )
 }

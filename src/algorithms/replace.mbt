@@ -170,9 +170,17 @@ test "test_myers_replace" {
     Range::new(0, b.length()),
   )
   let ops = capture.ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Equal(old_index=0, new_index=0, len=1), Replace(old_index=1, old_len=1, new_index=1, new_len=1), Equal(old_index=2, new_index=2, len=3), Replace(old_index=5, old_len=1, new_index=5, new_len=1), Equal(old_index=6, new_index=6, len=3)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=1),
+      #|  Replace(old_index=1, old_len=1, new_index=1, new_len=1),
+      #|  Equal(old_index=2, new_index=2, len=3),
+      #|  Replace(old_index=5, old_len=1, new_index=5, new_len=1),
+      #|  Equal(old_index=6, new_index=6, len=3),
+      #|]
+    ),
   )
 }
 
@@ -191,8 +199,13 @@ test "test_replace" {
     Range::new(0, b.length()),
   )
   let ops = capture.ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Equal(old_index=0, new_index=0, len=3), Replace(old_index=3, old_len=2, new_index=3, new_len=3)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=3),
+      #|  Replace(old_index=3, old_len=2, new_index=3, new_len=3),
+      #|]
+    ),
   )
 }

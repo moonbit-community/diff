@@ -1,6 +1,10 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "ruifeng/diff/algorithms"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
 pub fn[T : Eq] cleanup_diff_ops(Array[T], Array[T], Array[DiffOp]) -> Unit
 
@@ -42,7 +46,7 @@ pub(all) enum DiffOp {
   Delete(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int)
   Insert(mut old_index~ : Int, mut new_index~ : Int, mut new_len~ : Int)
   Replace(mut old_index~ : Int, mut old_len~ : Int, mut new_index~ : Int, mut new_len~ : Int)
-} derive(Compare, Eq, Hash)
+} derive(Compare, Eq, Hash, @debug.Debug)
 pub fn[D : DiffHook] DiffOp::apply_to_hook(Self, D) -> Result[Unit, Error]
 pub fn DiffOp::grow_left(Self, Int) -> Unit
 pub fn DiffOp::grow_right(Self, Int) -> Unit

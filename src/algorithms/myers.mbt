@@ -337,9 +337,16 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=4), Insert(old_index=3, new_index=3, new_len=1), Equal(old_index=4, new_index=4, len=1)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=3),
+      #|  Delete(old_index=3, old_len=1, new_index=4),
+      #|  Insert(old_index=3, new_index=3, new_len=1),
+      #|  Equal(old_index=4, new_index=4, len=1),
+      #|]
+    ),
   )
 
   // Test 2: Multiple changes with duplicates
@@ -354,9 +361,19 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Equal(old_index=0, new_index=0, len=3), Delete(old_index=3, old_len=1, new_index=4), Insert(old_index=3, new_index=3, new_len=1), Insert(old_index=4, new_index=4, new_len=1), Equal(old_index=4, new_index=5, len=2), Delete(old_index=6, old_len=2, new_index=7), Insert(old_index=8, new_index=7, new_len=1)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=3),
+      #|  Delete(old_index=3, old_len=1, new_index=4),
+      #|  Insert(old_index=3, new_index=3, new_len=1),
+      #|  Insert(old_index=4, new_index=4, new_len=1),
+      #|  Equal(old_index=4, new_index=5, len=2),
+      #|  Delete(old_index=6, old_len=2, new_index=7),
+      #|  Insert(old_index=8, new_index=7, new_len=1),
+      #|]
+    ),
   )
 
   // Test 3: Insertions and deletions
@@ -371,8 +388,16 @@ test "test_diff" {
     Range::new(0, b.length()),
   )
   let ops = capture.into_ops()
-  inspect(
+  debug_inspect(
     ops,
-    content="[Equal(old_index=0, new_index=0, len=2), Delete(old_index=2, old_len=1, new_index=2), Equal(old_index=3, new_index=2, len=2), Insert(old_index=5, new_index=4, new_len=1), Insert(old_index=5, new_index=5, new_len=1)]",
+    content=(
+      #|[
+      #|  Equal(old_index=0, new_index=0, len=2),
+      #|  Delete(old_index=2, old_len=1, new_index=2),
+      #|  Equal(old_index=3, new_index=2, len=2),
+      #|  Insert(old_index=5, new_index=4, new_len=1),
+      #|  Insert(old_index=5, new_index=5, new_len=1),
+      #|]
+    ),
   )
 }
