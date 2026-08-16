@@ -4,32 +4,36 @@
 /// Different hooks can be implemented to process or store the diff results.
 pub(open) trait DiffHook {
   ///| Called when a sequence of equal items is found.
-  equal(Self, old_index : Int, new_index : Int, len : Int) -> Result[
+  fn equal(Self, old_index : Int, new_index : Int, len : Int) -> Result[
     Unit,
     Error,
   ] = _
   ///| Called when a sequence of items is deleted from the old sequence.
-  delete(Self, old_index : Int, old_len : Int, new_index : Int) -> Result[
+  fn delete(Self, old_index : Int, old_len : Int, new_index : Int) -> Result[
     Unit,
     Error,
   ] = _
   ///| Called when a sequence of items is inserted into the new sequence.
-  insert(Self, old_index : Int, new_index : Int, new_len : Int) -> Result[
+  fn insert(Self, old_index : Int, new_index : Int, new_len : Int) -> Result[
     Unit,
     Error,
   ] = _
   ///| Called when a sequence of items is replaced.
-  replace(Self, old_index : Int, old_len : Int, new_index : Int, new_len : Int) -> Result[
-    Unit,
-    Error,
-  ] = _
+  fn replace(
+    Self,
+    old_index : Int,
+    old_len : Int,
+    new_index : Int,
+    new_len : Int,
+  ) -> Result[Unit, Error] = _
   ///| Called when the diffing process is complete.
-  finish(Self) -> Result[Unit, Error] = _
+  fn finish(Self) -> Result[Unit, Error] = _
 }
 
 ///|
 /// Default implementation for `equal`.
-impl DiffHook with equal(
+#warnings("-result_error_return")
+impl DiffHook with fn equal(
   _self : Self,
   _old_index : Int,
   _new_index : Int,
@@ -40,7 +44,8 @@ impl DiffHook with equal(
 
 ///|
 /// Default implementation for `delete`.
-impl DiffHook with delete(
+#warnings("-result_error_return")
+impl DiffHook with fn delete(
   _self : Self,
   _old_index : Int,
   _old_len : Int,
@@ -51,7 +56,8 @@ impl DiffHook with delete(
 
 ///|
 /// Default implementation for `insert`.
-impl DiffHook with insert(
+#warnings("-result_error_return")
+impl DiffHook with fn insert(
   _self : Self,
   _old_index : Int,
   _new_index : Int,
@@ -62,7 +68,8 @@ impl DiffHook with insert(
 
 ///|
 /// Default implementation for `replace`.
-impl DiffHook with replace(
+#warnings("-result_error_return")
+impl DiffHook with fn replace(
   _self : Self,
   _old_index : Int,
   _old_len : Int,
@@ -74,7 +81,8 @@ impl DiffHook with replace(
 
 ///|
 /// Default implementation for `finish`.
-impl DiffHook with finish(_self : Self) -> Result[Unit, Error] {
+#warnings("-result_error_return")
+impl DiffHook with fn finish(_self : Self) -> Result[Unit, Error] {
   Ok(())
 }
 
@@ -100,7 +108,8 @@ pub fn[D] NoFinishHook::into_inner(self : NoFinishHook[D]) -> D {
 
 ///|
 /// Forwards the `equal` call to the inner hook.
-impl[D : DiffHook] DiffHook for NoFinishHook[D] with equal(
+#warnings("-result_error_return")
+impl[D : DiffHook] DiffHook for NoFinishHook[D] with fn equal(
   self,
   old_index,
   new_index,
@@ -111,7 +120,8 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with equal(
 
 ///|
 /// Forwards the `delete` call to the inner hook.
-impl[D : DiffHook] DiffHook for NoFinishHook[D] with delete(
+#warnings("-result_error_return")
+impl[D : DiffHook] DiffHook for NoFinishHook[D] with fn delete(
   self,
   old_index,
   old_len,
@@ -122,7 +132,8 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with delete(
 
 ///|
 /// Forwards the `insert` call to the inner hook.
-impl[D : DiffHook] DiffHook for NoFinishHook[D] with insert(
+#warnings("-result_error_return")
+impl[D : DiffHook] DiffHook for NoFinishHook[D] with fn insert(
   self,
   old_index,
   new_index,
@@ -133,7 +144,8 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with insert(
 
 ///|
 /// Forwards the `replace` call to the inner hook.
-impl[D : DiffHook] DiffHook for NoFinishHook[D] with replace(
+#warnings("-result_error_return")
+impl[D : DiffHook] DiffHook for NoFinishHook[D] with fn replace(
   self,
   old_index,
   old_len,
@@ -145,6 +157,7 @@ impl[D : DiffHook] DiffHook for NoFinishHook[D] with replace(
 
 ///|
 /// Ignores the `finish` call.
-impl[D : DiffHook] DiffHook for NoFinishHook[D] with finish(_self) {
+#warnings("-result_error_return")
+impl[D : DiffHook] DiffHook for NoFinishHook[D] with fn finish(_self) {
   Ok(())
 }

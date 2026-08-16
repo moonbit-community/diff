@@ -30,9 +30,12 @@ pub(all) struct Range {
 }
 
 ///|
-pub impl Show for Range with output(self, logger) {
+pub impl Show for Range with fn output(self, logger) {
   logger.write_string("{start: \{self.start}, end: \{self.end}}")
 }
+
+///|
+pub extend Range with Show::{to_string, output}
 
 ///|
 /// Creates a new Range with specified start and end indices

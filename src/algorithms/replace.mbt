@@ -27,6 +27,7 @@ pub fn[D] Replace::into_inner(self : Replace[D]) -> D {
 
 ///|
 /// Flushes any pending `Equal` operation to the inner hook.
+#warnings("-result_error_return")
 pub fn[D : DiffHook] Replace::flush_eq(
   self : Replace[D],
 ) -> Result[Unit, Error] {
@@ -43,6 +44,7 @@ pub fn[D : DiffHook] Replace::flush_eq(
 
 ///|
 /// If both are present, they are merged into a `Replace` operation.
+#warnings("-result_error_return")
 pub fn[D : DiffHook] Replace::flush_del_ins(
   self : Replace[D],
 ) -> Result[Unit, Error] {
@@ -72,7 +74,8 @@ pub fn[D : DiffHook] Replace::flush_del_ins(
 
 ///|
 /// Flushes any pending insert/delete ops and merges consecutive equal ops.
-pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
+#warnings("-result_error_return")
+pub impl[D : DiffHook] DiffHook for Replace[D] with fn equal(
   self,
   old_index,
   new_index,
@@ -91,7 +94,8 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with equal(
 
 ///|
 /// Flushes any pending equal ops and merges consecutive delete ops.
-pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
+#warnings("-result_error_return")
+pub impl[D : DiffHook] DiffHook for Replace[D] with fn delete(
   self,
   old_index,
   old_len,
@@ -110,7 +114,8 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with delete(
 
 ///|
 /// Flushes any pending equal ops and merges consecutive insert ops.
-pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
+#warnings("-result_error_return")
+pub impl[D : DiffHook] DiffHook for Replace[D] with fn insert(
   self,
   old_index,
   new_index,
@@ -129,7 +134,8 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with insert(
 
 ///|
 /// Flushes any pending operations and forwards the replace to the inner hook.
-pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
+#warnings("-result_error_return")
+pub impl[D : DiffHook] DiffHook for Replace[D] with fn replace(
   self,
   old_index,
   old_len,
@@ -143,11 +149,15 @@ pub impl[D : DiffHook] DiffHook for Replace[D] with replace(
 
 ///|
 /// Finishes the diffing process by flushing any remaining pending operations.
-pub impl[D : DiffHook] DiffHook for Replace[D] with finish(self) {
+#warnings("-result_error_return")
+pub impl[D : DiffHook] DiffHook for Replace[D] with fn finish(self) {
   let _ = self.flush_eq()
   let _ = self.flush_del_ins()
   self.d.finish()
 }
+
+///|
+pub extend Replace with DiffHook::{replace, finish, delete, insert, equal}
 
 ///|
 /// A test for the `Replace` hook with the Myers algorithm.

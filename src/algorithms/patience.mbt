@@ -61,6 +61,7 @@ pub(all) struct Patience[T, D] {
 /// 2. Find LCS of unique items using Myers algorithm
 /// 3. Use matching unique items as anchors for recursive diffing
 /// 4. Apply Myers algorithm between anchors for detailed differences
+#warnings("-result_error_return")
 pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   d : D,
   old : Array[T],
@@ -74,7 +75,7 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
   let new_indexes = unique(new, new_range)
 
   // Create Patience structure to track state during processing
-  let patience = {
+  let patience = Patience::{
     d,
     old,
     old_current: old_range.start,
@@ -114,7 +115,8 @@ pub fn[T : Eq + Hash, D : DiffHook] Patience::diff(
 /// 2. Report the common prefix as Equal operations
 /// 3. Recursively diff the region between anchors using Myers algorithm
 /// 4. Move to the next anchor point
-impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
+#warnings("-result_error_return")
+impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with fn equal(
   self,
   old,
   new,
@@ -169,7 +171,8 @@ impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with equal(
 ///
 /// PROCESSING STRATEGY:
 /// Handle any remaining content after the last anchor point
-impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with finish(self) {
+#warnings("-result_error_return")
+impl[T : Eq, D : DiffHook] DiffHook for Patience[T, D] with fn finish(self) {
   // Diff any remaining content after the last anchor
   Myers::diff(
     self.d,

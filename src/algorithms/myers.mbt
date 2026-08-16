@@ -61,13 +61,15 @@ pub fn V::len(self : V) -> Int {
 
 ///|
 /// Gets the x-coordinate for diagonal k
-pub fn V::op_get(self : V, i : Int) -> Int {
+#alias("_[_]")
+pub fn V::get(self : V, i : Int) -> Int {
   self.v[i + self.offset]
 }
 
 ///|
 /// Sets the x-coordinate for diagonal k
-pub fn V::op_set(self : V, i : Int, value : Int) -> Unit {
+#alias("_[_]=_")
+pub fn V::set(self : V, i : Int, value : Int) -> Unit {
   self.v[i + self.offset] = value
 }
 
@@ -100,6 +102,7 @@ fn split_at(range : Range, at : Int) -> (Range, Range) {
 /// 1. Initialize data structures (V vectors for forward/backward search)
 /// 2. Use divide-and-conquer to recursively find optimal diffs
 /// 3. Report results through the provided DiffHook
+#warnings("-result_error_return")
 pub fn[T : Eq, D : DiffHook] Myers::diff(
   d : D,
   old : Array[T],
@@ -241,7 +244,7 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   new_range : Range,
   vf : V, // forward v
   vb : V, // backward v
-) -> Result[Unit, Error] {
+) -> Unit {
   // Step 1: Strip common prefix (matches at the beginning)
   let common_prefix_len = common_prefix_len(old, old_range, new, new_range)
   if common_prefix_len > 0 {
@@ -292,7 +295,7 @@ fn[T : Eq, D : DiffHook] divide_and_conquer(
   if common_suffix_len > 0 {
     let _ = d.equal(common_suffix.0, common_suffix.1, common_suffix_len)
   }
-  Ok(())
+  ()
 }
 
 ///|

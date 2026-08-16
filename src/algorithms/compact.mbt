@@ -69,7 +69,8 @@ pub fn[D, T] Compact::into_ops(self : Compact[D, T]) -> Array[DiffOp] {
 
 ///|
 /// Captures an Equal operation for later compaction
-pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
+#warnings("-result_error_return")
+pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with fn equal(
   self,
   old_index,
   new_index,
@@ -81,7 +82,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with equal(
 
 ///|
 /// Captures a Delete operation for later compaction
-pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
+#warnings("-result_error_return")
+pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with fn delete(
   self,
   old_index,
   old_len,
@@ -93,7 +95,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with delete(
 
 ///|
 /// Captures an Insert operation for later compaction
-pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
+#warnings("-result_error_return")
+pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with fn insert(
   self,
   old_index,
   new_index,
@@ -110,7 +113,8 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with insert(
 /// 1. Clean up operations using shift algorithms
 /// 2. Sort operations for consistent ordering
 /// 3. Apply operations to inner hook
-pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> Result[
+#warnings("-result_error_return")
+pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with fn finish(self) -> Result[
   Unit,
   Error,
 ] {
@@ -126,6 +130,9 @@ pub impl[D : DiffHook, T : Eq] DiffHook for Compact[D, T] with finish(self) -> R
   }
   self.d.finish()
 }
+
+///|
+pub extend Compact with DiffHook::{replace, finish, delete, insert, equal}
 
 /// ================================================================================
 /// COMPACTION ALGORITHMS

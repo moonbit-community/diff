@@ -17,7 +17,19 @@ pub(all) enum DiffOp {
 } derive(Eq, Hash, Compare, Debug)
 
 ///|
-pub impl Show for DiffOp with output(self, logger) {
+pub extend DiffOp with Eq::{not_equal, equal}
+
+///|
+pub extend DiffOp with Hash::{hash, hash_combine}
+
+///|
+pub extend DiffOp with Compare::{op_lt, op_le, op_ge, compare, op_gt}
+
+///|
+pub extend DiffOp with Debug::{to_repr}
+
+///|
+pub impl Show for DiffOp with fn output(self, logger) {
   match self {
     Equal(old_index~, new_index~, len~) =>
       logger.write_string(
@@ -39,7 +51,11 @@ pub impl Show for DiffOp with output(self, logger) {
 }
 
 ///|
+pub extend DiffOp with Show::{to_string, output}
+
+///|
 /// Applies the given `DiffOp` to a `DiffHook`.
+#warnings("-result_error_return")
 pub fn[D : DiffHook] DiffOp::apply_to_hook(
   self : Self,
   d : D,
