@@ -24,6 +24,9 @@
 /// This allows it to collect operations from any diff algorithm
 struct Capture(Array[DiffOp]) derive(Default)
 
+///|
+pub extend Capture with Default::{default}
+
 /// ================================================================================
 /// CONSTRUCTION METHODS
 /// ================================================================================
@@ -73,7 +76,8 @@ pub fn Capture::ops(self : Capture) -> Array[DiffOp] {
 /// @param old_index Starting index in old sequence
 /// @param new_index Starting index in new sequence  
 /// @param len Number of equal elements
-pub impl DiffHook for Capture with equal(
+#warnings("-result_error_return")
+pub impl DiffHook for Capture with fn equal(
   self : Capture,
   old_index : Int,
   new_index : Int,
@@ -89,7 +93,8 @@ pub impl DiffHook for Capture with equal(
 /// @param old_index Starting index in old sequence
 /// @param old_len Number of deleted elements
 /// @param new_index Position in new sequence where deletion occurred
-pub impl DiffHook for Capture with delete(
+#warnings("-result_error_return")
+pub impl DiffHook for Capture with fn delete(
   self : Capture,
   old_index : Int,
   old_len : Int,
@@ -105,7 +110,8 @@ pub impl DiffHook for Capture with delete(
 /// @param old_index Position in old sequence where insertion occurred
 /// @param new_index Starting index in new sequence
 /// @param new_len Number of inserted elements
-pub impl DiffHook for Capture with insert(
+#warnings("-result_error_return")
+pub impl DiffHook for Capture with fn insert(
   self : Capture,
   old_index : Int,
   new_index : Int,
@@ -122,7 +128,8 @@ pub impl DiffHook for Capture with insert(
 /// @param old_len Number of elements replaced
 /// @param new_index Starting index in new sequence
 /// @param new_len Number of replacement elements
-pub impl DiffHook for Capture with replace(
+#warnings("-result_error_return")
+pub impl DiffHook for Capture with fn replace(
   self : Capture,
   old_index : Int,
   old_len : Int,
@@ -138,10 +145,17 @@ pub impl DiffHook for Capture with replace(
 ///
 /// ALGORITHM: Sorts operations by old sequence position, then new sequence position
 /// This ensures deterministic output regardless of algorithm execution order
-pub impl DiffHook for Capture with finish(self : Capture) -> Result[Unit, Error] {
+#warnings("-result_error_return")
+pub impl DiffHook for Capture with fn finish(self : Capture) -> Result[
+  Unit,
+  Error,
+] {
   self.sort()
   Ok(())
 }
+
+///|
+pub extend Capture with DiffHook::{replace, finish, delete, insert, equal}
 
 ///|
 /// ================================================================================
